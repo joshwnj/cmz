@@ -41,8 +41,8 @@ tape('creating classnames', function (t) {
     'def': ['ghi', 'jkl']
   }
   t.equals(
-    f('abc', comps, 'def'), 
-    'abc__def ghi jkl', 
+    f('abc', comps, 'def'),
+    'abc__def ghi jkl',
     'Multiple matching compositions')
 
   t.end()

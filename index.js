@@ -19,8 +19,7 @@ function cmz (filename, comps) {
   const relFilename = absFilename.substr(rootDir.length + 1)
   const baseToken = tokenFromRelFilename(relFilename)
 
-  const api = cmz.createClassname.bind(null, baseToken, comps)
-  return api
+  return cmz.createClassname.bind(null, baseToken, comps)
 }
 
 function inline (css, comps) {
@@ -30,8 +29,7 @@ function inline (css, comps) {
   const relFilename = absFilename.substr(rootDir.length + 1)
   const baseToken = tokenFromRelFilename(relFilename)
 
-  const api = cmz.createClassname.bind(null, baseToken, comps)
-  return api
+  return cmz.createClassname.bind(null, baseToken, comps)
 }
 
 function createClassname (baseToken, comps, name) {
