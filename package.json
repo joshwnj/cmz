@@ -6,9 +6,11 @@
   "dependencies": {
     "caller": "^1.0.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "tape": "^4.6.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape tests/*.js"
   },
   "repository": {
     "type": "git",
