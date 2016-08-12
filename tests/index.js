@@ -47,3 +47,34 @@ tape('creating classnames', function (t) {
 
   t.end()
 })
+
+tape('Main api', function (t) {
+  const f = cmz
+
+  t.equals(
+    f()('abc'),
+    'tests_index__abc',
+    'No filename provided')
+
+  t.equals(
+    f('.')('abc'),
+    'tests_index__abc',
+    'Dot means current file')
+
+  t.equals(
+    f('./file/styles.css')('abc'),
+    'tests_file_styles__abc',
+    'Path to sub file')
+
+  t.equals(
+    f('../src/styles.css')('abc'),
+    'src_styles__abc',
+    'Backtrack to file')
+
+  t.equals(
+    f('../src/styles.css', { abc: ['def', 'ghi'] })('abc'),
+    'src_styles__abc def ghi',
+    'With composition')
+
+  t.end()
+})
