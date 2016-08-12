@@ -13,7 +13,7 @@ function createInsertCssCode (id, css) {
   return `
 if (!global.__cmz_sheets) { global.__cmz_sheets = [] }
 if (global.__cmz_sheets.indexOf('${id}') === -1) {
-  require('insert-css')(${JSON.stringify(css)})
+  require('insert-css')(\`${css}\`)
   global.__cmz_sheets.push('${id}')
 }
 `
@@ -74,7 +74,16 @@ function handleInlineNode (filename, n, cb) {
 
   const relFilename = filename.substr(rootDir.length + 1)
   const baseToken = cmz.tokenFromRelFilename(relFilename)
-  const css = args[0].source().replace(/(^`|`$)/g, '').replace(/\$\{niceBlue\}/g, '@niceBlue')
+
+  // substitute out any js blocks so they don't interfere with postcss
+  const subs = []
+  const css = args[0].source()
+        .replace(/(^`|`$)/g, '')
+        .replace(/\$\{.*?\}/g, function (matches) {
+          const i = subs.length
+          subs.push(matches)
+          return `@sub_${i}`
+        })
 
   const postcssOpts = {
     baseToken: baseToken,
@@ -84,9 +93,13 @@ function handleInlineNode (filename, n, cb) {
   transformCss(css, postcssOpts, function (err, res) {
     if (err) { return cb(err) }
 
-    n.update(`cmz.createClassname.bind(null, '${baseToken}', {})
+    // substitute the js blocks back in
+    const css = res.css.replace(/\@sub_(\d+)/g, function (match, i) {
+      return subs[i]
+    })
 
-${createInsertCssCode(relFilename, res.css.replace(/@niceBlue/g, '${niceBlue}'))}
+    n.update(`cmz.createClassname.bind(null, '${baseToken}', {})
+${createInsertCssCode(relFilename, css)}
 `)
 
     cb()
