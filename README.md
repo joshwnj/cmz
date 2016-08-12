@@ -38,6 +38,29 @@ The usual assumption is that a `.js` file can have a corresponding `.css` file o
 const styles = cmz('../shared/boxes.css')
 ```
 
+### How do I compose classes?
+
+Unlike traditional CSS Modules, `cmz` does not support the `composes:` keyword. Instead we do composition in javascript:
+
+```js
+const boxes = cmz('../shared/boxes.css')
+
+const styles = cmz('widget.css', {
+  root: [boxes('boxWithBorder'), 'someGlobalClass'],
+  heading: 'globalHeadingClass'
+})
+
+console.log(styles('root'))
+console.log(styles('heading'))
+```
+
+This will output:
+
+```
+"components_widget__root shared_boxes__boxWithBorder someGlobalClass"
+"components_widget__heading globalHeadingClass"
+```
+
 ## Thanks
 
 to the [CSS Modules team](https://github.com/orgs/css-modules/people)
