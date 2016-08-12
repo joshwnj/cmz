@@ -61,6 +61,22 @@ This will output:
 "components_widget__heading globalHeadingClass"
 ```
 
+### How do I use dynamic values from javascript?
+
+`cmz` does not use the `@value` syntax like traditonal CSS Modules, instead we can just use javascript and define a CSS Module with `cmz.inline`:
+
+```js
+const colors = require('../shared/colors')
+const niceRed = colors.niceRed
+
+const styles = cmz.inline(`
+.root {
+  border: 1px solid ${niceRed};
+  color: ${niceRed};
+}
+`)
+```
+
 ## Thanks
 
 to the [CSS Modules team](https://github.com/orgs/css-modules/people)
