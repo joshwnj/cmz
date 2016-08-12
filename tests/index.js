@@ -78,3 +78,19 @@ tape('Main api', function (t) {
 
   t.end()
 })
+
+tape('Inline api', function (t) {
+  const f = cmz.inline
+
+  t.equals(
+    f()('abc'),
+    'tests_index__abc',
+    'No args provided')
+
+  t.equals(
+    f('', { abc: ['def', 'ghi'] })('abc'),
+    'tests_index__abc def ghi',
+    'With composition')
+
+  t.end()
+})
