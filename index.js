@@ -16,7 +16,7 @@ function cmz (filename, comps) {
   const callerDir = path.dirname(callerFile)
   const absFilename = path.resolve(callerDir, filename)
 
-  const relFilename = absFilename.substr(rootDir.length + 1)
+  const relFilename = relativeToRoot(absFilename)
   const baseToken = tokenFromRelFilename(relFilename)
 
   return cmz.createClassname.bind(null, baseToken, comps)
@@ -26,7 +26,7 @@ function inline (css, comps) {
   comps = comps || {}
 
   const absFilename = caller()
-  const relFilename = absFilename.substr(rootDir.length + 1)
+  const relFilename = relativeToRoot(absFilename)
   const baseToken = tokenFromRelFilename(relFilename)
 
   return cmz.createClassname.bind(null, baseToken, comps)
@@ -43,6 +43,10 @@ function createClassname (baseToken, comps, name) {
 
 function tokenFromRelFilename (relFilename) {
   return relFilename.replace(/[\/\\]/g, '_').replace(/\.(.*?)$/, '')
+}
+
+function relativeToRoot (filename) {
+  return filename.substr(rootDir.length + 1)
 }
 
 module.exports = cmz
