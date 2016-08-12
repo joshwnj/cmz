@@ -77,6 +77,28 @@ const styles = cmz.inline(`
 `)
 ```
 
+### How do I build for the browser?
+
+`cmz` comes with a simple `browserify` transform, so you first need to install that as a depedency: `npm i -D browserify`
+
+Then add this to your `package.json` scripts:
+
+```
+"scripts": {
+  ...
+  "build": "browserify -t cmz/transform -o bundle.js src/index.js"
+  ...
+}
+```
+
+- `src/index.js` is the entry-point for your frontend js
+- `bundle.js` is the file that browserify generates, and you include in your page with a `<script>` tag
+
+
+### Can I see an example of this?
+
+Yes! But right now you'd have to come to my house and see it, I haven't published it yet.
+
 ## Thanks
 
 to the [CSS Modules team](https://github.com/orgs/css-modules/people)
