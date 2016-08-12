@@ -3,10 +3,20 @@
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
+  "browser": {
+    "index.js": "./browser.js"
+  },
   "dependencies": {
-    "caller": "^1.0.1"
+    "caller": "^1.0.1",
+    "css-selector-tokenizer": "^0.6.0",
+    "falafel": "^1.2.0",
+    "insert-css": "^1.0.0",
+    "postcss": "^5.1.2",
+    "run-parallel": "^1.1.6",
+    "through2": "^2.0.1"
   },
   "devDependencies": {
+    "browserify": "^13.1.0",
     "standard": "^7.1.2",
     "tap-spec": "^4.1.1",
     "tape": "^4.6.0"
