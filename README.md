@@ -30,6 +30,14 @@ module.exports = `
 `
 ```
 
+### What if my CSS is in a different file?
+
+The usual assumption is that a `.js` file can have a corresponding `.css` file of the same base name.  But you can manually specify the CSS module to load:
+
+```js
+const styles = cmz('../shared/boxes.css')
+```
+
 ## Thanks
 
 to the [CSS Modules team](https://github.com/orgs/css-modules/people)
