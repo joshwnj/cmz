@@ -95,6 +95,12 @@ Then add this to your `package.json` scripts:
 - `bundle.js` is the file that browserify generates, and you include in your page with a `<script>` tag
 
 
+### Can `cmz` generate a `.css` file?
+
+At the moment `cmz` adds all css to the page at runtime via a `<style>` tag. In a lot of cases this is fine, and will save you a network request as it's all bundled in the one `.js` file.
+
+In future there will be a plugin that extracts this css out of the js bundle to a separate `.css` file. If that is important to you I'd love to help you make a PR :)
+
 ### Can I see an example of this?
 
 Yes! But right now you'd have to come to my house and see it, I haven't published it yet.
