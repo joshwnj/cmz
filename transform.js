@@ -52,69 +52,21 @@ function handleCssFile (filename) {
 function handleNormalNode (filename, n, cb) {
   const args = n.arguments
 
-  // if no arg was set, add one to the build so we can
-  // figure out classnames at runtime
-  if (args.length === 0) {
-    const relFilename = filename.substr(rootDir.length + 1)
-    const baseToken = cmz.tokenFromRelFilename(relFilename)
-    const cssFile = filename.replace(/\.js$/, '.css')
+  const comps = args.length > 1 ? args[1].source() : '{}'
+  const filenameArg = args.length > 0 ? args[0].value : '.'
+  const modFilename = filenameArg === '.' ?
+        filename :
+        path.resolve(path.dirname(filename), filenameArg)
 
-    n.update(`cmz.createClassname.bind(null, '${baseToken}', {})
+  const relFilename = modFilename.substr(rootDir.length + 1)
+  const baseToken = cmz.tokenFromRelFilename(relFilename)
+  const cssFile = modFilename.replace(/\.js$/, '.css')
+
+  n.update(`cmz.createClassname.bind(null, '${baseToken}', ${comps})
 require('${cssFile}')
 `)
 
-    return cb()
-  }
-  // ----
-  // 1 arg: manually specify the css module to load
-  else if (args.length === 1) {
-    const modFilename = args[0].value === '.' ? filename : path.resolve(path.dirname(filename), args[0].value)
-    const relFilename = modFilename.substr(rootDir.length + 1)
-    const baseToken = cmz.tokenFromRelFilename(relFilename)
-    const cssFile = modFilename.replace(/\.js$/, '.css')
-    const relCssFile = cssFile.substr(rootDir.length + 1)
-    const css = fs.readFileSync(cssFile, 'utf8')
-
-    const postcssOpts = {
-      baseToken: baseToken,
-      filename: cssFile
-    }
-
-    transformCss(css, postcssOpts, function (err, res) {
-      if (err) { return cb(err) }
-
-      n.update(`cmz.createClassname.bind(null, '${baseToken}', {})
-
-${createInsertCssCode(relCssFile, res.css)}
-`)
-      cb()
-    })
-  }
-  // ----
-  // 2 args: manually specify the css module, and compositions
-  else if (args.length === 2) {
-    const modFilename = args[0].value === '.' ? filename : path.resolve(path.dirname(filename), args[0].value)
-    const relFilename = modFilename.substr(rootDir.length + 1)
-    const baseToken = cmz.tokenFromRelFilename(relFilename)
-    const cssFile = modFilename.replace(/\.js$/, '.css')
-    const relCssFile = cssFile.substr(rootDir.length + 1)
-    const css = fs.readFileSync(cssFile, 'utf8')
-
-    const postcssOpts = {
-      baseToken: baseToken,
-      filename: cssFile
-    }
-
-    transformCss(css, postcssOpts, function (err, res) {
-      if (err) { return cb(err) }
-
-      n.update(`cmz.createClassname.bind(null, '${baseToken}', ${args[1].source()})
-
-${createInsertCssCode(relCssFile, res.css)}
-`)
-      cb()
-    })
-  }
+  return cb()
 }
 
 function handleInlineNode (filename, n, cb) {
