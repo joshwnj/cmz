@@ -1,13 +1,12 @@
-const falafel = require('falafel')
 const fs = require('fs')
 const parallel = require('run-parallel')
 const path = require('path')
 const through = require('through2')
 
 const cmz = require('./index.js')
+const parseJs = require('./lib/parse-js')
 const transformCss = require('./lib/transform-css')
 
-const MOD_NAME = 'cmz'
 const rootDir = process.cwd()
 
 function createInsertCssCode (id, css) {
@@ -60,9 +59,7 @@ module.exports = function transform (filename) {
   if (!/\.js$/.test(filename)) { return through() }
 
   const bufs = []
-  const cmzNodes = []
-  const cmzInlineNodes = []
-  let refName
+
 
   return through(write, end)
 
@@ -75,10 +72,11 @@ module.exports = function transform (filename) {
 
   function end (done) {
     const src = Buffer.concat(bufs).toString('utf8')
-    const ast = falafel(src, { ecmaVersion: 6 }, walk)
+    const parseInfo = parseJs(src)
+    const ast = parseInfo.ast
     const self = this
 
-    parallel(cmzNodes.map(function (n) {
+    parallel(parseInfo.nodes.normal.map(function (n) {
       return function (cb) {
         const args = n.arguments
 
@@ -152,7 +150,7 @@ ${createInsertCssCode(relCssFile, res.css)}
       }
 
       // process inline nodes
-      parallel(cmzInlineNodes.map(function (n) {
+      parallel(parseInfo.nodes.inline.map(function (n) {
         return function (cb) {
           const args = n.arguments
 
@@ -187,35 +185,5 @@ ${createInsertCssCode(relFilename, res.css.replace(/@niceBlue/g, '${niceBlue}'))
         done()
       })
     })
-  }
-
-  function walk (node) {
-    // find `require('cmz')` and record the name it's bound to
-    if (node.type === 'CallExpression' &&
-        node.callee && node.callee.name === 'require' &&
-        node.arguments.length === 1 &&
-        node.arguments[0].value === MOD_NAME) {
-      refName = node.parent.id.name
-      return
-    }
-
-    // find places where `cmz(...)` is called
-    if (node.type === 'CallExpression' &&
-        node.callee && node.callee.type === 'Identifier' &&
-        node.callee.name === refName
-       ) {
-      // add the node to a list so we can replace it
-      cmzNodes.push(node)
-      return
-    }
-
-    // find places where `cmz.inline(...)` is called
-    if (node.type === 'CallExpression' &&
-        node.callee && node.callee.type === 'MemberExpression' &&
-        node.callee.object.name === refName &&
-        node.callee.property.name === 'inline') {
-      cmzInlineNodes.push(node)
-      return
-    }
   }
 }
