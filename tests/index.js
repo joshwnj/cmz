@@ -1,3 +1,5 @@
+'use strict'
+
 const tape = require('tape')
 const cmz = require('../index.js')
 
