@@ -5,11 +5,14 @@ const cmz = require('cmz')
 // corresponding name to this js module (aka index.css)
 const styles = cmz()
 
+// shortcut for creating a `class=""` attribute
+const cl = require('../../util/cl')(styles)
+
 module.exports = function (props) {
   return `
-<div class="${styles('card')}">
-  <div class="${styles('inner')}">
-     <img class="${styles('image')}" src="${props.image}" />
+<div ${cl('card')}>
+  <div ${cl('inner')}">
+     <img ${cl('image')} src="${props.image}" />
   </div>
 </div>
   `
