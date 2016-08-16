@@ -11,11 +11,7 @@ const rootDir = process.cwd()
 
 function createInsertCssCode (id, css) {
   return `
-if (!global.__cmz_sheets) { global.__cmz_sheets = [] }
-if (global.__cmz_sheets.indexOf('${id}') === -1) {
-  require('insert-css')(\`${css}\`)
-  global.__cmz_sheets.push('${id}')
-}
+require('cmz').upsertCss('${id}', \`${css}\`)
 `
 }
 

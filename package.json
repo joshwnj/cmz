@@ -11,7 +11,6 @@
     "caller": "^1.0.1",
     "css-selector-tokenizer": "^0.6.0",
     "falafel": "^1.2.0",
-    "insert-css": "^1.0.0",
     "postcss": "^5.1.2",
     "run-parallel": "^1.1.6",
     "through2": "^2.0.1"
