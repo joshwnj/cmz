@@ -68,6 +68,7 @@ require('${cssFile}')
 function handleInlineNode (filename, n, cb) {
   const args = n.arguments
 
+  const comps = args.length > 1 ? args[1].source() : '{}'
   const relFilename = filename.substr(rootDir.length + 1)
   const baseToken = cmz.tokenFromRelFilename(relFilename)
 
@@ -94,7 +95,7 @@ function handleInlineNode (filename, n, cb) {
       return subs[i]
     })
 
-    n.update(`cmz.createClassname.bind(null, '${baseToken}', {})
+    n.update(`cmz.createClassname.bind(null, '${baseToken}', ${comps})
 ${createInsertCssCode(relFilename, css)}
 `)
 
