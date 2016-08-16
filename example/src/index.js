@@ -31,4 +31,8 @@ if (!module.parent) {
   }
 }
 
+if (module.hot) {
+  module.hot.accept()
+}
+
 module.exports = html
