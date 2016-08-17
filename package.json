@@ -23,7 +23,7 @@
   },
   "scripts": {
     "lint": "standard",
-    "test": "tape tests/*.js | tap-spec"
+    "test": "tape tests/index.js | tap-spec"
   },
   "repository": {
     "type": "git",
