@@ -38,7 +38,8 @@ function createClassname (baseToken, comps, name) {
     compsForName = [compsForName]
   }
 
-  return [`${baseToken}__${name}`].concat(compsForName).join(' ')
+  const token = baseToken + (name ? `__${name}` : '')
+  return [token].concat(compsForName).join(' ')
 }
 
 function tokenFromRelFilename (relFilename) {
