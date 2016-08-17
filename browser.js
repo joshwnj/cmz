@@ -24,6 +24,8 @@ function upsertCss (id, css) {
   } else {
     el.textContent = css
   }
+
+  return el
 }
 
 module.exports.createClassname = createClassname
