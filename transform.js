@@ -95,8 +95,10 @@ function handleInlineNode (filename, n, cb) {
       return subs[i]
     })
 
+    const line = n.loc.start.line
+    const id = `${relFilename}:${line}`
     n.update(`cmz.createClassname.bind(null, '${baseToken}', ${comps})
-${createInsertCssCode(relFilename, css)}
+${createInsertCssCode(id, css)}
 `)
 
     cb()
