@@ -7,8 +7,8 @@ const baseStyles = cmz('../card/index.css')
 // `cmz.inline(...)` means we can define css in the js module,
 // without needing to split into separate files.
 // This is useful if you have base classes and want to make a few alterations.
-const styles = cmz.inline(`
-.card {
+const styles = cmz.inline('card', `
+& {
   border-radius: 0;
 }
 
@@ -17,11 +17,11 @@ const styles = cmz.inline(`
   transition: transform 1s ease-in-out;
 }
 
-.card:hover .image {
+&:hover .image {
   transform: rotate(0deg);
 }
 `, {
-  card: baseStyles('card'),
+  '': baseStyles(),
   inner: baseStyles('inner'),
   image: baseStyles('image')
 })
@@ -31,7 +31,7 @@ const cl = require('../../util/cl')(styles)
 
 module.exports = function (props) {
   return `
-<div ${cl('card')}>
+<div ${cl()}>
   <div ${cl('inner')}">
      <img ${cl('image')} src="${props.image}" />
   </div>

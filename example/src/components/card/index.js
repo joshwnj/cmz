@@ -10,7 +10,7 @@ const cl = require('../../util/cl')(styles)
 
 module.exports = function (props) {
   return `
-<div ${cl('card')}>
+<div ${cl()}>
   <div ${cl('inner')}">
      <img ${cl('image')} src="${props.image}" />
   </div>
