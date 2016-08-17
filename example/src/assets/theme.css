@@ -35,8 +35,8 @@ header {
 }
 
 .screen {
-  min-height: 70vh;
   border-top: 1px dashed #EEE;
+  padding-bottom: 32px;
 }
 
 .screen > .inner {
