@@ -68,13 +68,14 @@ require('${cssFile}')
 function handleInlineNode (filename, n, cb) {
   const args = n.arguments
 
-  const comps = args.length > 1 ? args[1].source() : '{}'
+  const rootName = args[0].source().replace(/[\"\'\`]/g, '')
+  const comps = args.length > 2 ? args[2].source() : '{}'
   const relFilename = filename.substr(rootDir.length + 1)
-  const baseToken = cmz.tokenFromRelFilename(relFilename)
+  const baseToken = `${cmz.tokenFromRelFilename(relFilename)}_${rootName}`
 
   // substitute out any js blocks so they don't interfere with postcss
   const subs = []
-  const css = args[0].source()
+  const css = args[1].source()
         .replace(/(^`|`$)/g, '')
         .replace(/\$\{.*?\}/g, function (matches) {
           const i = subs.length
@@ -97,9 +98,7 @@ function handleInlineNode (filename, n, cb) {
 
     const line = n.loc.start.line
     const id = `${relFilename}:${line}`
-    n.update(`cmz.createClassname.bind(null, '${baseToken}', ${comps})
-${createInsertCssCode(id, css)}
-`)
+    n.update(`(${createInsertCssCode(id, css)} && cmz.createClassname.bind(null, '${baseToken}', ${comps}))`)
 
     cb()
   })

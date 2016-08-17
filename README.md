@@ -71,13 +71,23 @@ This will output:
 const colors = require('../shared/colors')
 const niceRed = colors.niceRed
 
-const styles = cmz.inline(`
-.root {
+const styles = cmz.inline('Widget', `
+& {
   border: 1px solid ${niceRed};
   color: ${niceRed};
 }
+
+&:hover {
+  color: pink;
+}
+
+& > h1 {
+  font-weight: bold;
+}
 `)
 ```
+
+Note that in the above example, `&` is a placeholder for the root classname. You can get that by calling the returned `styles()` function with no arguments, like `<div class="${styles()}"><h1>oi</h1></div>`
 
 ### How do I build for the browser?
 

@@ -22,12 +22,12 @@ function cmz (filename, comps) {
   return cmz.createClassname.bind(null, baseToken, comps)
 }
 
-function inline (css, comps) {
+function inline (rootName, css, comps) {
   comps = comps || {}
 
   const absFilename = caller()
   const relFilename = relativeToRoot(absFilename)
-  const baseToken = tokenFromRelFilename(relFilename)
+  const baseToken = tokenFromRelFilename(relFilename) + '_' + rootName
 
   return cmz.createClassname.bind(null, baseToken, comps)
 }

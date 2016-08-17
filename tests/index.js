@@ -85,13 +85,18 @@ tape('Inline api', function (t) {
   const f = cmz.inline
 
   t.equals(
-    f()('abc'),
-    'tests_index__abc',
+    f('BaseName')('abc'),
+    'tests_index_BaseName__abc',
     'No args provided')
 
   t.equals(
-    f('', { abc: ['def', 'ghi'] })('abc'),
-    'tests_index__abc def ghi',
+    f('BaseName')(),
+    'tests_index_BaseName',
+    'No args or name provided')
+
+  t.equals(
+    f('BaseName', '', { abc: ['def', 'ghi'] })('abc'),
+    'tests_index_BaseName__abc def ghi',
     'With composition')
 
   t.end()
