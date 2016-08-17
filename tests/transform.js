@@ -18,6 +18,8 @@ function runTestCase (dir) {
     const caseDir = path.join(casesDir, dir)
     const b = browserify()
 
+    b.require(path.join(__dirname, '..'), { expose: 'cmz' })
+    b.external(path.join(__dirname, '..'))
     b.add(path.join(caseDir, 'index.js'))
     b.transform(cmzTransform)
 
