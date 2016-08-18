@@ -117,6 +117,8 @@ In future there will be a plugin that extracts this css out of the js bundle to 
 
 Yes! There are still a few things to add, but you can see the WIP in the [example](https://github.com/joshwnj/cmz/tree/master/example) directory. Or view it online: <https://joshwnj.github.io/cmz/>
 
+There's also another example that explores some different techniques of styling components: <https://github.com/joshwnj/cmz-tweet>
+
 ## Thanks
 
 to the [CSS Modules team](https://github.com/orgs/css-modules/people)
