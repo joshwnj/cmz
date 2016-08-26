@@ -75,13 +75,18 @@ function handleInlineNode (filename, n, cb) {
 
   // substitute out any js blocks so they don't interfere with postcss
   const subs = []
-  const css = args[1].source()
-        .replace(/(^`|`$)/g, '')
-        .replace(/\$\{.*?\}/g, function (matches) {
-          const i = subs.length
-          subs.push(matches)
-          return `@sub_${i}`
-        })
+  const tl = args[1]
+  const css = tl.quasis.map(function (q) {
+    let part = q.value.raw
+
+    if (!q.tail) {
+      const i = subs.length
+      part += `@sub_${i}`
+      subs.push(tl.expressions[i].source())
+    }
+
+    return part
+  }).join('')
 
   const postcssOpts = {
     baseToken: baseToken,
@@ -93,7 +98,7 @@ function handleInlineNode (filename, n, cb) {
 
     // substitute the js blocks back in
     const css = res.css.replace(/\@sub_(\d+)/g, function (match, i) {
-      return subs[i]
+      return '${' + subs[i] + '}'
     })
 
     const line = n.loc.start.line
