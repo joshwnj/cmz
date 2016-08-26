@@ -127,26 +127,26 @@ module.exports = function transform (filename) {
     const ast = parseInfo.ast
     const self = this
 
-    parallel(parseInfo.nodes.normal.map(function (n) {
-      return handleNormalNode.bind(null, filename, n)
-    }), function endParallel (err) {
+    function createHandlers (nodes, handler) {
+      return nodes.map(function (n) {
+        return handler.bind(null, filename, n)
+      })
+    }
+
+    const funcs = []
+          .concat(createHandlers(parseInfo.nodes.normal, handleNormalNode))
+          .concat(createHandlers(parseInfo.nodes.inline, handleInlineNode))
+          .filter(Boolean)
+
+    parallel(funcs, function (err) {
       if (err) {
-        return self.emit('error', err)
+        self.emit('error', err)
+        return done()
       }
 
-      // process inline nodes
-      parallel(parseInfo.nodes.inline.map(function (n) {
-        return handleInlineNode.bind(null, filename, n)
-      }), function endParallel (err) {
-        if (err) {
-          self.emit('error', err)
-          return done()
-        }
-
-        self.push(ast.toString())
-        self.push(null)
-        done()
-      })
+      self.push(ast.toString())
+      self.push(null)
+      done()
     })
   }
 }
