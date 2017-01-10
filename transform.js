@@ -58,8 +58,20 @@ function handleNormalNode (filename, n, cb) {
   const baseToken = cmz.tokenFromRelFilename(relFilename)
   const cssFile = modFilename.replace(/\.js$/, '.css')
 
-  n.update(`cmz.createClassname.bind(null, '${baseToken}', ${comps})
-require('${cssFile}')
+  n.update(`(function () {
+  require('${cssFile}')
+  const baseToken = '${baseToken}'
+  const comps = ${comps}
+  const func = cmz.createClassname.bind(null, baseToken, comps)
+  func.getComps = function () { return comps }
+
+  // shortcuts
+  Object.keys(comps).forEach(function (key) {
+    func[key] = func(key)
+  })
+
+  return func
+}())
 `)
 
   return cb()

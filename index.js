@@ -19,7 +19,15 @@ function cmz (filename, comps) {
   const relFilename = relativeToRoot(absFilename)
   const baseToken = tokenFromRelFilename(relFilename)
 
-  return cmz.createClassname.bind(null, baseToken, comps)
+  const func = cmz.createClassname.bind(null, baseToken, comps)
+  func.getComps = function () { return comps }
+
+  // shortcuts
+  Object.keys(comps).forEach(function (key) {
+    func[key] = func(key)
+  })
+
+  return func
 }
 
 function inline (rootName, css, comps) {
