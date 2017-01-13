@@ -77,18 +77,9 @@ function handleNormalNode (filename, n, cb) {
   return cb()
 }
 
-function handleInlineNode (filename, n, cb) {
-  const args = n.arguments
-
-  const rootName = args[0].source().replace(/[\"\'\`]/g, '')
-  const comps = args.length > 2 ? args[2].source() : '{}'
-  const relFilename = filename.substr(rootDir.length + 1)
-  const baseToken = `${cmz.tokenFromRelFilename(relFilename)}_${rootName}`
-
-  // substitute out any js blocks so they don't interfere with postcss
+function prepareCss_template (tl) {
   const subs = []
-  const tl = args[1]
-  const css = tl.quasis.map(function (q) {
+  const result = tl.quasis.map(function (q) {
     let part = q.value.raw
 
     if (!q.tail) {
@@ -99,6 +90,65 @@ function handleInlineNode (filename, n, cb) {
 
     return part
   }).join('')
+
+  return {
+    subs: subs,
+    result: result
+  }
+}
+
+function prepareCss_string (node) {
+  const subs = []
+  const result = []
+
+  function visit (node) {
+    if (node.type === 'Literal') {
+      result.push(node.value)
+      return
+    }
+
+    if (node.type === 'Identifier') {
+      result.push(`@sub_${subs.length}`)
+      subs.push(node.name)
+      return
+    }
+
+    if (node.type === 'BinaryExpression') {
+      visit(node.left)
+      visit(node.right)
+      return
+    }
+
+    console.error('Unexpected node:', node)
+  }
+
+  visit(node)
+
+  return {
+    subs: subs,
+    result: result.join('')
+  }
+}
+
+function prepareCss (tl) {
+  return tl.quasis ?
+    prepareCss_template(tl) :
+    prepareCss_string(tl)
+}
+
+function handleInlineNode (filename, n, cb) {
+  const args = n.arguments
+
+  const rootName = args[0].source().replace(/[\"\'\`]/g, '')
+  const comps = args.length > 2 ? args[2].source() : '{}'
+  const relFilename = filename.substr(rootDir.length + 1)
+  const baseToken = `${cmz.tokenFromRelFilename(relFilename)}_${rootName}`
+
+  // substitute out any js blocks so they don't interfere with postcss
+  const tl = args[1]
+  const prepared = prepareCss(tl)
+  const css = prepared.result
+  const subs = prepared.subs
 
   const postcssOpts = {
     baseToken: baseToken,
