@@ -1,3 +1,15 @@
+function createFunc (baseToken, comps) {
+  const func = createClassname.bind(null, baseToken, comps)
+  func.getComps = function () { return comps }
+
+  // shortcuts
+  Object.keys(comps).forEach(function (key) {
+    func[key] = func(key)
+  })
+
+  return func
+}
+
 function createClassname (baseToken, comps, name) {
   let compsForName = comps[name] || []
   if (typeof compsForName === 'string') {
@@ -28,5 +40,6 @@ function upsertCss (id, css) {
   return el
 }
 
+module.exports.createFunc = createFunc
 module.exports.createClassname = createClassname
 module.exports.upsertCss = upsertCss

@@ -60,19 +60,8 @@ function handleNormalNode (filename, n, cb) {
 
   n.update(`(function () {
   require('${cssFile}')
-  const baseToken = '${baseToken}'
-  const comps = ${comps}
-  const func = cmz.createClassname.bind(null, baseToken, comps)
-  func.getComps = function () { return comps }
-
-  // shortcuts
-  Object.keys(comps).forEach(function (key) {
-    func[key] = func(key)
-  })
-
-  return func
-}())
-`)
+  return cmz.createFunc('${baseToken}', ${comps})
+}())`)
 
   return cb()
 }
@@ -165,7 +154,11 @@ function handleInlineNode (filename, n, cb) {
 
     const line = n.loc.start.line
     const id = `${relFilename}:${line}`
-    n.update(`(${createInsertCssCode(id, css)} && cmz.createClassname.bind(null, '${baseToken}', ${comps}))`)
+
+    n.update(`(function () {
+  ${createInsertCssCode(id, css)}
+  return cmz.createFunc('${baseToken}', ${comps})
+}())`)
 
     cb()
   })
