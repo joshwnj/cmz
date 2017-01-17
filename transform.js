@@ -1,3 +1,5 @@
+'use strict'
+
 const fs = require('fs')
 const parallel = require('run-parallel')
 const path = require('path')
