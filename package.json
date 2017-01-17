@@ -29,6 +29,12 @@
     "type": "git",
     "url": "git+https://github.com/joshwnj/cmz.git"
   },
+  "standard": {
+    "ignore": [
+      "tests/cases/*/{actual,expected}.js",
+      "example"
+    ]
+  },
   "keywords": [],
   "author": "joshwnj",
   "license": "MIT",

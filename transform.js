@@ -1,6 +1,5 @@
 'use strict'
 
-const fs = require('fs')
 const parallel = require('run-parallel')
 const path = require('path')
 const through = require('through2')
@@ -52,9 +51,9 @@ function handleNormalNode (filename, n, cb) {
 
   const comps = args.length > 1 ? args[1].source() : '{}'
   const filenameArg = args.length > 0 ? args[0].value : '.'
-  const modFilename = filenameArg === '.' ?
-        filename :
-        path.resolve(path.dirname(filename), filenameArg)
+  const modFilename = filenameArg === '.'
+        ? filename
+        : path.resolve(path.dirname(filename), filenameArg)
 
   const relFilename = modFilename.substr(rootDir.length + 1)
   const baseToken = cmz.tokenFromRelFilename(relFilename)
@@ -68,7 +67,7 @@ function handleNormalNode (filename, n, cb) {
   return cb()
 }
 
-function prepareCss_template (tl) {
+function prepareCssTemplate (tl) {
   const subs = []
   const result = tl.quasis.map(function (q) {
     let part = q.value.raw
@@ -88,7 +87,7 @@ function prepareCss_template (tl) {
   }
 }
 
-function prepareCss_string (node) {
+function prepareCssString (node) {
   const subs = []
   const result = []
 
@@ -122,15 +121,15 @@ function prepareCss_string (node) {
 }
 
 function prepareCss (tl) {
-  return tl.quasis ?
-    prepareCss_template(tl) :
-    prepareCss_string(tl)
+  return tl.quasis
+    ? prepareCssTemplate(tl)
+    : prepareCssString(tl)
 }
 
 function handleInlineNode (filename, n, cb) {
   const args = n.arguments
 
-  const rootName = args[0].source().replace(/[\"\'\`]/g, '')
+  const rootName = args[0].source().replace(/["'`]/g, '')
   const comps = args.length > 2 ? args[2].source() : '{}'
   const relFilename = filename.substr(rootDir.length + 1)
   const baseToken = `${cmz.tokenFromRelFilename(relFilename)}_${rootName}`
@@ -150,7 +149,7 @@ function handleInlineNode (filename, n, cb) {
     if (err) { return cb(err) }
 
     // substitute the js blocks back in
-    const css = res.css.replace(/\@sub_(\d+)/g, function (match, i) {
+    const css = res.css.replace(/@sub_(\d+)/g, function (match, i) {
       return '${' + subs[i] + '}'
     })
 
