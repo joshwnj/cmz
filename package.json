@@ -16,7 +16,7 @@
     "through2": "^2.0.1"
   },
   "devDependencies": {
-    "browserify": "^13.1.0",
+    "browserify": "^14.0.0",
     "standard": "^8.6.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.6.0"
