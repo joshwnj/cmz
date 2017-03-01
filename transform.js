@@ -10,9 +10,10 @@ const transformCss = require('./lib/transform-css')
 
 const rootDir = process.cwd()
 
-function createInsertCssCode (id, css) {
+function createInsertCssCode (id, css, scopedNames) {
   return `
 require('cmz').upsertCss('${id}', \`${css}\`)
+module.exports = ${JSON.stringify(scopedNames)}
 `
 }
 
@@ -39,7 +40,7 @@ function handleCssFile (filename) {
         return done()
       }
 
-      self.push(createInsertCssCode(relFilename, res.css))
+      self.push(createInsertCssCode(relFilename, res.css, res.scopedNames))
       self.push(null)
       done()
     })
@@ -49,7 +50,6 @@ function handleCssFile (filename) {
 function handleNormalNode (filename, n, cb) {
   const args = n.arguments
 
-  const comps = args.length > 1 ? args[1].source() : '{}'
   const filenameArg = args.length > 0 ? args[0].value : '.'
   const modFilename = filenameArg === '.'
         ? filename
@@ -60,8 +60,8 @@ function handleNormalNode (filename, n, cb) {
   const cssFile = modFilename.replace(/\.js$/, '.css')
 
   n.update(`(function () {
-  require('${cssFile}')
-  return cmz.createFunc('${baseToken}', ${comps})
+  var tokens = require('${cssFile}')
+  return tokens
 }())`)
 
   return cb()
@@ -130,7 +130,6 @@ function handleInlineNode (filename, n, cb) {
   const args = n.arguments
 
   const rootName = args[0].source().replace(/["'`]/g, '')
-  const comps = args.length > 2 ? args[2].source() : '{}'
   const relFilename = filename.substr(rootDir.length + 1)
   const baseToken = `${cmz.tokenFromRelFilename(relFilename)}_${rootName}`
 
@@ -157,8 +156,8 @@ function handleInlineNode (filename, n, cb) {
     const id = `${relFilename}:${line}`
 
     n.update(`(function () {
-  ${createInsertCssCode(id, css)}
-  return cmz.createFunc('${baseToken}', ${comps})
+  ${createInsertCssCode(id, css, res.scopedNames)}
+  return ${JSON.stringify(res.scopedNames)}
 }())`)
 
     cb()

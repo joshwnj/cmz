@@ -1,53 +1,45 @@
 'use strict'
 
+const browser = require('./browser')
+const fs = require('fs')
 const path = require('path')
 const caller = require('caller')
+const transformCss = require('./lib/transform-css')
 
 let rootDir = process.cwd()
 
-function cmz (filename, comps) {
-  comps = comps || {}
-
-  const callerFile = caller()
-  if (typeof filename !== 'string' || filename === '.') {
-    filename = callerFile
-  }
-
-  const callerDir = path.dirname(callerFile)
-  const absFilename = path.resolve(callerDir, filename)
-
+function cmz (filename) {
+  const absFilename = getAbsFilename(filename, caller())
   const relFilename = relativeToRoot(absFilename)
-  const baseToken = tokenFromRelFilename(relFilename)
 
-  const func = cmz.createClassname.bind(null, baseToken, comps)
-  func.getComps = function () { return comps }
-
-  // shortcuts
-  Object.keys(comps).forEach(function (key) {
-    func[key] = func(key)
+  const raw = fs.readFileSync(absFilename, 'utf8')
+  return transform(raw, {
+    baseToken: tokenFromRelFilename(relFilename),
+    filename: absFilename
   })
-
-  return func
 }
 
-function inline (rootName, css, comps) {
-  comps = comps || {}
-
+function inline (rootName, raw) {
   const absFilename = caller()
   const relFilename = relativeToRoot(absFilename)
   const baseToken = tokenFromRelFilename(relFilename) + '_' + rootName
 
-  return cmz.createClassname.bind(null, baseToken, comps)
+  return transform(raw, {
+    baseToken: baseToken,
+    filename: absFilename
+  })
 }
 
-function createClassname (baseToken, comps, name) {
-  let compsForName = comps[name] || []
-  if (typeof compsForName === 'string') {
-    compsForName = [compsForName]
-  }
+function transform (raw, opts) {
+  const lazyResult = transformCss.sync(raw, opts)
+  const css = lazyResult.css
+  const scopedNames = lazyResult.result.scopedNames
 
-  const token = baseToken + (name ? `__${name}` : '')
-  return [token].concat(compsForName).join(' ')
+  const result = Object.assign({}, scopedNames, {
+    '@css': css
+  })
+
+  return result
 }
 
 function tokenFromRelFilename (relFilename) {
@@ -58,7 +50,18 @@ function relativeToRoot (filename) {
   return filename.substr(rootDir.length + 1)
 }
 
+function getAbsFilename (filename, callerFile) {
+  if (typeof filename !== 'string' || filename === '.') {
+    filename = callerFile.replace(/\.js$/, '.css')
+  }
+
+  const callerDir = path.dirname(callerFile)
+  return path.resolve(callerDir, filename)
+}
+
 module.exports = cmz
 module.exports.inline = inline
-module.exports.createClassname = createClassname
+module.exports.transform = transform
+module.exports.compose = browser.compose
 module.exports.tokenFromRelFilename = tokenFromRelFilename
+module.exports.getAbsFilename = getAbsFilename

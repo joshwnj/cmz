@@ -26,8 +26,8 @@ And now you can style your widget with locally-scoped classnames from `widget.cs
 
 ```js
 module.exports = `
-<div class="${styles('root')}">
-  <div class="${styles('heading')}">...</div>
+<div class="${styles.root}">
+  <div class="${styles.heading}">...</div>
 </div>
 `
 ```
@@ -42,18 +42,19 @@ const styles = cmz('../shared/boxes.css')
 
 ### How do I compose classes?
 
-Unlike traditional CSS Modules, `cmz` does not support the `composes:` keyword. Instead we do composition in javascript:
+Unlike traditional CSS Modules, `cmz` does not support the `composes:` keyword. Instead we do composition in javascript with the `cmz.compose` function:
 
 ```js
 const boxes = cmz('../shared/boxes.css')
 
-const styles = cmz('widget.css', {
-  root: [boxes('boxWithBorder'), 'someGlobalClass'],
+const styles = cmz('./widget.css')
+cmz.compose(styles, {
+  root: [boxes.boxWithBorder, 'someGlobalClass'],
   heading: 'globalHeadingClass'
 })
 
-console.log(styles('root'))
-console.log(styles('heading'))
+console.log(styles.root)
+console.log(styles.heading)
 ```
 
 This will output:
@@ -72,22 +73,20 @@ const colors = require('../shared/colors')
 const niceRed = colors.niceRed
 
 const styles = cmz.inline('Widget', `
-& {
+.root {
   border: 1px solid ${niceRed};
   color: ${niceRed};
 }
 
-&:hover {
+.root:hover {
   color: pink;
 }
 
-& > h1 {
+.root > h1 {
   font-weight: bold;
 }
 `)
 ```
-
-Note that in the above example, `&` is a placeholder for the root classname. You can get that by calling the returned `styles()` function with no arguments, like `<div class="${styles()}"><h1>oi</h1></div>`
 
 ### How do I build for the browser?
 
@@ -126,5 +125,3 @@ to the [CSS Modules team](https://github.com/orgs/css-modules/people)
 ## License
 
 MIT
-
-
