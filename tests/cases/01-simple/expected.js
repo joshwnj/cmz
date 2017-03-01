@@ -4,12 +4,14 @@ require('cmz').upsertCss('tests/cases/01-simple/index.css', `.tests_cases_01-sim
   color: #F00;
 }
 `)
+module.exports = {"root":"tests_cases_01-simple_index__root"}
 
 },{"cmz":"cmz"}],2:[function(require,module,exports){
 const cmz = require('cmz')
-const styles = cmz.createClassname.bind(null, 'tests_cases_01-simple_index', {})
-require('/Users/josh/projects/css-modules/cmz/tests/cases/01-simple/index.css')
-
-module.exports = `<div class="${styles('root')}">...</div>`
+const styles = (function () {
+  var tokens = require('/Users/josh/projects/css-modules/cmz/tests/cases/01-simple/index.css')
+  return tokens
+}())
+module.exports = `<div class="${styles.root}">...</div>`
 
 },{"/Users/josh/projects/css-modules/cmz/tests/cases/01-simple/index.css":1,"cmz":"cmz"}]},{},[2]);

@@ -2,6 +2,7 @@
 
 const tape = require('tape')
 const cmz = require('../index.js')
+const path = require('path')
 
 tape('creating tokens', function (t) {
   const f = cmz.tokenFromRelFilename
@@ -12,92 +13,69 @@ tape('creating tokens', function (t) {
   t.end()
 })
 
-tape('creating classnames', function (t) {
-  let comps = {}
-  const f = cmz.createClassname
+tape('abs filename', function (t) {
+  const f = cmz.getAbsFilename
 
   t.equals(
-    f('abc', comps, 'def'),
-    'abc__def',
-    'Single classname')
+    f(null, __filename),
+    __filename.replace(/\.js$/, '.css'),
+    'No input given: use caller filename')
 
-  comps = {
-    'a': 'b'
-  }
   t.equals(
-    f('abc', comps, 'def'),
-    'abc__def',
-    'No matching compositions')
+    f('.', __filename),
+    __filename.replace(/\.js$/, '.css'),
+    'Dot: use caller filename')
 
-  comps = {
-    'a': 'b',
-    'def': 'ghi'
-  }
   t.equals(
-    f('abc', comps, 'def'),
-    'abc__def ghi',
-    'One matching composition')
+    f('./foo.css', __filename),
+    path.join(__dirname, 'foo.css'),
+    'Relative path')
 
-  comps = {
-    'a': 'b',
-    'def': ['ghi', 'jkl']
-  }
   t.equals(
-    f('abc', comps, 'def'),
-    'abc__def ghi jkl',
-    'Multiple matching compositions')
+    f('../foo.css', __filename),
+    path.join(path.dirname(__dirname), 'foo.css'),
+    'Backtracked relative path')
 
   t.end()
 })
 
-tape('Main api', function (t) {
-  const f = cmz
+tape('transform', function (t) {
+  const f = cmz.transform
+  const res = f(`
+.abc {}
+.def {}
+`, {
+    baseToken: 'test'
+  })
 
-  t.equals(
-    f()('abc'),
-    'tests_index__abc',
-    'No filename provided')
-
-  t.equals(
-    f('.')('abc'),
-    'tests_index__abc',
-    'Dot means current file')
-
-  t.equals(
-    f('./file/styles.css')('abc'),
-    'tests_file_styles__abc',
-    'Path to sub file')
-
-  t.equals(
-    f('../src/styles.css')('abc'),
-    'src_styles__abc',
-    'Backtrack to file')
-
-  t.equals(
-    f('../src/styles.css', { abc: ['def', 'ghi'] })('abc'),
-    'src_styles__abc def ghi',
-    'With composition')
+  t.equal(res.abc, 'test__abc')
 
   t.end()
 })
 
-tape('Inline api', function (t) {
-  const f = cmz.inline
+tape('compose', function (t) {
+  const f = cmz.compose
+  t.deepEqual(
+    f({ a: 'a', b: 'b' }, {}),
+    { a: 'a', b: 'b' },
+    'Empty composition means no changes')
 
-  t.equals(
-    f('BaseName')('abc'),
-    'tests_index_BaseName__abc',
-    'No args provided')
+  const orig = { a: 'a', b: 'b' }
+  const expected = { a: 'a extra', b: 'b', c: 'new' }
+  t.deepEqual(
+    f(orig, { a: 'extra', c: 'new' }),
+    expected,
+    'Appends to existing items and adds new ones')
 
-  t.equals(
-    f('BaseName')(),
-    'tests_index_BaseName',
-    'No args or name provided')
+  t.deepEqual(
+    orig,
+    expected,
+    'Modifies original')
 
-  t.equals(
-    f('BaseName', '', { abc: ['def', 'ghi'] })('abc'),
-    'tests_index_BaseName__abc def ghi',
-    'With composition')
+  t.equal(
+    f(orig, { c: ['and', 'more'] }).c,
+    'new and more',
+    'Compositions can be strings or array of strings')
 
   t.end()
 })
