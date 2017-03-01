@@ -1,25 +1,3 @@
-function createFunc (baseToken, comps) {
-  const func = createClassname.bind(null, baseToken, comps)
-  func.getComps = function () { return comps }
-
-  // shortcuts
-  Object.keys(comps).forEach(function (key) {
-    func[key] = func(key)
-  })
-
-  return func
-}
-
-function createClassname (baseToken, comps, name) {
-  let compsForName = comps[name] || []
-  if (typeof compsForName === 'string') {
-    compsForName = [compsForName]
-  }
-
-  const token = baseToken + (name ? `__${name}` : '')
-  return [token].concat(compsForName).join(' ')
-}
-
 function upsertCss (id, css) {
   const head = document.querySelector('head')
   var el = head.querySelector('style[data-cmz="' + id + '"]')
@@ -40,6 +18,15 @@ function upsertCss (id, css) {
   return el
 }
 
-module.exports.createFunc = createFunc
-module.exports.createClassname = createClassname
+function compose (a, b) {
+  Object.keys(b).forEach(function (k) {
+    // a composition can be either a string, or an array of strings
+    const comp = typeof b[k] === 'string' ? b[k] : b[k].join(' ')
+    a[k] = a[k] ? `${a[k]} ${comp}` : comp
+  })
+
+  return a
+}
+
 module.exports.upsertCss = upsertCss
+module.exports.compose = compose
