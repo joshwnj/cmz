@@ -8,7 +8,7 @@ const baseStyles = cmz('../card/index.css')
 // without needing to split into separate files.
 // This is useful if you have base classes and want to make a few alterations.
 const styles = cmz.inline('card', `
-& {
+.root {
   border-radius: 0;
 }
 
@@ -17,23 +17,21 @@ const styles = cmz.inline('card', `
   transition: transform 1s ease-in-out;
 }
 
-&:hover .image {
+.root:hover .image {
   transform: rotate(0deg);
 }
-`, {
-  '': baseStyles(),
-  inner: baseStyles('inner'),
-  image: baseStyles('image')
-})
+`)
 
-// shortcut for creating a `class=""` attribute
+// compose our custom styles with the base styles
+cmz.compose(styles, baseStyles)
+
 const cl = require('../../util/cl')(styles)
 
 module.exports = function (props) {
   return `
-<div ${cl()}>
-  <div ${cl('inner')}">
-     <img ${cl('image')} src="${props.image}" />
+<div ${cl.root}>
+  <div ${cl.inner}>
+     <img ${cl.image} src="${props.image}" />
   </div>
 </div>
   `
