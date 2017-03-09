@@ -1,37 +1,29 @@
 const cmz = require('cmz')
+const cardStyles = require('../card').styles
 
-// when we provide a path in `cmz(...)` we can load
-// a css module from somewhere else
-const baseStyles = cmz('../card/index.css')
+const image = cmz(`
+  transform: rotate(-180deg);
+  transition: transform 1s ease-in-out;
+`)
 
-// `cmz.inline(...)` means we can define css in the js module,
-// without needing to split into separate files.
-// This is useful if you have base classes and want to make a few alterations.
-const styles = cmz.inline('card', `
-.root {
+const styles = cmz({
+  root: `
+& {
   border-radius: 0;
 }
 
-.image {
-  transform: rotate(-180deg);
-  transition: transform 1s ease-in-out;
-}
-
-.root:hover .image {
+&:hover .${image.name} {
   transform: rotate(0deg);
 }
-`)
-
-// compose our custom styles with the base styles
-cmz.compose(styles, baseStyles)
-
-const cl = require('../../util/cl')(styles)
+`,
+  image
+}).compose(cardStyles)
 
 module.exports = function (props) {
   return `
-<div ${cl.root}>
-  <div ${cl.inner}>
-     <img ${cl.image} src="${props.image}" />
+<div class="${styles.root}">
+  <div class="${styles.inner}">
+     <img class="${styles.image}" src="${props.image}" />
   </div>
 </div>
   `

@@ -13,9 +13,9 @@
     "watchify": "^3.7.0"
   },
   "scripts": {
-    "build": "browserify -t cmz/transform -o dist/bundle.js src/index.js",
-    "watch": "watchify -v -t cmz/transform -o dist/bundle.js src/index.js",
-    "hot": "watchify -v -p browserify-hmr -t cmz/transform -o dist/bundle.js src/index.js",
+    "build": "browserify -o dist/bundle.js src/index.js",
+    "watch": "watchify -v -o dist/bundle.js src/index.js",
+    "hot": "watchify -v -p browserify-hmr -o dist/bundle.js src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

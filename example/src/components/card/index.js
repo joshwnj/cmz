@@ -1,9 +1,25 @@
 const cmz = require('cmz')
-
-// calling `cmz()` like this, with no arguments,
-// means cmz will reference a css module with the
-// corresponding name to this js module (aka index.css)
-const styles = cmz()
+const styles = cmz({
+  root: `
+    width: 200px;
+    height: 300px;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: -4px 4px 16px #999;
+    background: #FFF;
+`,
+  inner: `
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: #EEE;
+    border-radius: 4px;
+`,
+  image: `
+    width: 80%;
+`
+})
 
 module.exports = function (props) {
   return `
@@ -14,3 +30,5 @@ module.exports = function (props) {
 </div>
   `
 }
+
+module.exports.styles = styles
