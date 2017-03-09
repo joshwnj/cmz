@@ -4,11 +4,22 @@
 
 **CSS Modules Zero:** A low-sugar variant of CSS Modules that runs in node and in the browser.
 
-## Goals
+## Principles of CSS Modules
 
-- Run in node without any additional tools.
-- Don't overload `require` / `import` for importing a CSS Module. We can do this with a normal js function call.
-- Don't alter CSS syntax. We can do composition and values in javascript.
+CSS Modules makes it easy to work with CSS classes that are:
+
+- **immutable**: once we define a class its meaning should not change (so avoid cascading)
+- **composeable**: compose small single-purpose classes together (rather than overriding properties via cascading)
+- **meaningful**: classes should be small and single-purpose, but not so small that their purpose becomes unclear.
+
+## Design Goals
+
+`cmz` differs from other CSS Modules implementations in the following areas:
+
+- Runs in node without any additional tools.
+- Easy to install and fast to build.
+- Doesn't overload `require` / `import` for importing a CSS Module. We can do this with a normal js function call.
+- Doesn't introduce new CSS syntax for composition and values. We can do this in javascript.
 
 ## How to get started
 
@@ -19,92 +30,85 @@ In your component `widget.js` you want to style with a CSS Module. Add this to t
 ```js
 const cmz = require('cmz')
 
-const styles = cmz()
+// Define a single class.
+const myAmazingClass = cmz(`
+  font-style: italic;
+  color: magenta;
+`)
+
+// This is the equivalent of
+//
+//  .myAmazingClass {
+//    font-style: italic;
+//    color: magenta;
+//  }
+
+// Now you can use that class:
+document.body.innerHTML = `<h1 class="${myAmazingclass}">cmz demo</h1>`
+
+// The css is automatically added to the document's stylesheet.
 ```
 
-And now you can style your widget with locally-scoped classnames from `widget.css`:
+### Pseudoselectors
+
+If you want a class with a pseudoselector, we can use the `&` placeholder (which is replaced with the class's unique name):
 
 ```js
-module.exports = `
-<div class="${styles.root}">
-  <div class="${styles.heading}">...</div>
-</div>
-`
-```
-
-### What if my CSS is in a different file?
-
-The usual assumption is that a `.js` file can have a corresponding `.css` file of the same base name.  But you can manually specify the CSS module to load:
-
-```js
-const styles = cmz('../shared/boxes.css')
-```
-
-### How do I compose classes?
-
-Unlike traditional CSS Modules, `cmz` does not support the `composes:` keyword. Instead we do composition in javascript with the `cmz.compose` function:
-
-```js
-const boxes = cmz('../shared/boxes.css')
-
-const styles = cmz('./widget.css')
-cmz.compose(styles, {
-  root: [boxes.boxWithBorder, 'someGlobalClass'],
-  heading: 'globalHeadingClass'
-})
-
-console.log(styles.root)
-console.log(styles.heading)
-```
-
-This will output:
-
-```
-"components_widget__root shared_boxes__boxWithBorder someGlobalClass"
-"components_widget__heading globalHeadingClass"
-```
-
-### How do I use dynamic values from javascript?
-
-`cmz` does not use the `@value` syntax like traditonal CSS Modules, instead we can just use javascript and define a CSS Module with `cmz.inline`:
-
-```js
-const colors = require('../shared/colors')
-const niceRed = colors.niceRed
-
-const styles = cmz.inline('Widget', `
-.root {
-  border: 1px solid ${niceRed};
-  color: ${niceRed};
+const classWithPseudos = cmz(`
+& {
+  color: magenta;
 }
 
-.root:hover {
-  color: pink;
-}
-
-.root > h1 {
-  font-weight: bold;
+&:hover {
+  color: cyan;
 }
 `)
 ```
 
-### How do I build for the browser?
+### Composition
 
-`cmz` comes with a simple `browserify` transform, so you first need to install that as a depedency: `npm i -D browserify`
+A useful pattern with CSS Modules is to define a library of common styles, and then compose them together.
 
-Then add this to your `package.json` scripts:
+```js
+// typography.js
 
+import cmz from 'cmz'
+
+export default cmz({
+  bigText: `
+    font-size: 48px;
+    letter-spacing: .1rem;
+    text-transform: uppercase;
+  `,
+
+  highlight: `
+    color: cyan;
+    font-weight: bold;
+  `
+})
 ```
-"scripts": {
-  ...
-  "build": "browserify -t cmz/transform -o bundle.js src/index.js"
-  ...
+
+```js
+// heading.js
+
+import cmz from 'cmz'
+import typography from './typography.js'
+
+const heading = cmz(`
+  padding: 16px;
+  border-bottom: 1px solid #000;
+`).compose([
+  typography.bigText,
+  typography.highlight
+])
+
+export default function () {
+  return `<h1 class="${heading}">cmz demo</h1>`
 }
+
 ```
 
-- `src/index.js` is the entry-point for your frontend js
-- `bundle.js` is the file that browserify generates, and you include in your page with a `<script>` tag
-
+The `.compose` function doesn't mutate any styles, it only adds extra classes to the DOM element.
 
 ### Can `cmz` generate a `.css` file?
 
@@ -115,8 +119,6 @@ In future there will be a plugin that extracts this css out of the js bundle to 
 ### Can I see an example of this?
 
 Yes! There are still a few things to add, but you can see the WIP in the [example](https://github.com/joshwnj/cmz/tree/master/example) directory. Or view it online: <https://joshwnj.github.io/cmz/>
-
-There's also another example that explores some different techniques of styling components: <https://github.com/joshwnj/cmz-tweet>
 
 ## Thanks
 
