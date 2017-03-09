@@ -3,9 +3,6 @@
   "version": "2.0.0",
   "description": "CSS Modules Zero",
   "main": "index.js",
-  "browser": {
-    "index.js": "./browser.js"
-  },
   "dependencies": {
     "caller": "^1.0.1"
   },
@@ -13,11 +10,18 @@
     "browserify": "^14.0.0",
     "standard": "^9.0.0",
     "tap-spec": "^4.1.1",
-    "tape": "^4.6.0"
+    "tape": "^4.6.0",
+    "uglifyjs": "^2.4.10"
   },
   "scripts": {
+    "clean": "rm -rf dist && mkdir dist",
+    "prebuild": "npm run clean",
+    "build": "npm run build:umd && npm run build:minify",
+    "build:umd": "browserify --standalone cmz -o dist/cmz.js index.js",
+    "build:minify": "uglifyjs -o dist/cmz.min.js dist/cmz.js",
     "lint": "standard",
-    "test": "tape tests/index.js tests/server.js | tap-spec"
+    "test": "tape tests/index.js tests/server.js | tap-spec",
+    "prepublish": "npm run lint && npm test && npm run build"
   },
   "repository": {
     "type": "git",
@@ -25,7 +29,6 @@
   },
   "standard": {
     "ignore": [
-      "tests/cases/*/{actual,expected}.js",
       "example"
     ]
   },
