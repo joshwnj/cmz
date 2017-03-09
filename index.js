@@ -1,27 +1,28 @@
 const upsertCss = require('./lib/upsert-css')
 const createName = require('./lib/create-name')
 
-function cmz (raw) {
-  if (typeof raw === 'string') { return createAtom(raw) }
-  if (typeof raw === 'object') { return createFamily(raw) }
+function cmz (prefix, raw) {
+  if (!raw) {
+    raw = prefix
+    prefix = createName()
+  }
+
+  if (typeof raw === 'string') { return new CmzAtom(prefix, raw) }
+  if (typeof raw === 'object') { return new CmzMod(prefix, raw) }
 }
 
-function createAtom (raw) {
-  return new CmzAtom(null, raw)
-}
-
-function createFamily (atoms) {
-  return new CmzFamily(createName(), atoms)
-}
-
-function CmzFamily (prefix, raw) {
+function CmzMod (prefix, raw) {
   // we'll use the same prefix for all atoms in this family
   this._prefix = prefix || createName()
   this._atoms = {}
-  this._addAtoms(raw)
+  if (raw) { this._addAtoms(raw) }
 }
 
-CmzFamily.prototype._addAtoms = function (raw) {
+CmzMod.prototype.add = function (raw) {
+  return this._addAtoms(raw)
+}
+
+CmzMod.prototype._addAtoms = function (raw) {
   const self = this
   Object.keys(raw).forEach(function (k) {
     if (raw[k] instanceof CmzAtom) {
@@ -29,21 +30,22 @@ CmzFamily.prototype._addAtoms = function (raw) {
       self._addAtom(k, raw[k])
     } else {
       // use the family key to make the classname a bit more descriptive
-      self._addAtom(k, new CmzAtom(self._prefix + '-' + k, raw[k]))
+      self._addAtom(k, new CmzAtom(self._prefix + '__' + k, raw[k]))
     }
   })
+  return this
 }
 
-CmzFamily.prototype._addAtom = function (key, atom) {
+CmzMod.prototype._addAtom = function (key, atom) {
   // expose atoms directly (but warn if there's a name clash)
   if (this[key]) {
-    console.warning('CmzFamily: %s already exists', key)
+    console.warning('[cmz] %s already exists in module %s', key, prefix)
   }
   this[key] = this._atoms[key] = atom
 }
 
 // compose 2 families together
-CmzFamily.prototype.compose = function (other) {
+CmzMod.prototype.compose = function (other) {
   const self = this
   Object.keys(other._atoms).forEach(function (k) {
     if (self._atoms[k]) {

@@ -1,5 +1,6 @@
 const cmz = require('cmz')
-const styles = cmz({
+
+const styles = cmz('Card', {
   root: `
     width: 200px;
     height: 300px;

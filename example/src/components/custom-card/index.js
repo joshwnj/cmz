@@ -1,23 +1,28 @@
 const cmz = require('cmz')
 const cardStyles = require('../card').styles
 
-const image = cmz(`
+// In this case we'll create the module first,
+// and then start adding classes, so we can reference
+// the scoped names internally. (eg. `&:hover .${styles.image.name}`)
+const styles = cmz('CustomCard', {
+  image: `
   transform: rotate(-180deg);
   transition: transform 1s ease-in-out;
-`)
+`})
 
-const styles = cmz({
+styles.add({
   root: `
 & {
   border-radius: 0;
 }
 
-&:hover .${image.name} {
+&:hover .${styles.image.name} {
   transform: rotate(0deg);
 }
-`,
-  image
-}).compose(cardStyles)
+`
+})
+
+styles.compose(cardStyles)
 
 module.exports = function (props) {
   return `
