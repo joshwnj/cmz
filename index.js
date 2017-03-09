@@ -39,7 +39,7 @@ CmzMod.prototype._addAtoms = function (raw) {
 CmzMod.prototype._addAtom = function (key, atom) {
   // expose atoms directly (but warn if there's a name clash)
   if (this[key]) {
-    console.warning('[cmz] %s already exists in module %s', key, prefix)
+    console.warning('[cmz] %s already exists in module %s', key, this._prefix)
   }
   this[key] = this._atoms[key] = atom
 }
