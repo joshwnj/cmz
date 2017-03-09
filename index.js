@@ -1,67 +1,98 @@
-'use strict'
+const upsertCss = require('./lib/upsert-css')
+const createName = require('./lib/create-name')
 
-const browser = require('./browser')
-const fs = require('fs')
-const path = require('path')
-const caller = require('caller')
-const transformCss = require('./lib/transform-css')
+function cmz (raw) {
+  if (typeof raw === 'string') { return createAtom(raw) }
+  if (typeof raw === 'object') { return createFamily(raw) }
+}
 
-let rootDir = process.cwd()
+function createAtom (raw) {
+  return new CmzAtom(null, raw)
+}
 
-function cmz (filename) {
-  const absFilename = getAbsFilename(filename, caller())
-  const relFilename = relativeToRoot(absFilename)
+function createFamily (atoms) {
+  return new CmzFamily(createName(), atoms)
+}
 
-  const raw = fs.readFileSync(absFilename, 'utf8')
-  return transform(raw, {
-    baseToken: tokenFromRelFilename(relFilename),
-    filename: absFilename
+function CmzFamily (prefix, raw) {
+  // we'll use the same prefix for all atoms in this family
+  this._prefix = prefix || createName()
+  this._atoms = {}
+  this._addAtoms(raw)
+}
+
+CmzFamily.prototype._addAtoms = function (raw) {
+  const self = this
+  Object.keys(raw).forEach(k => {
+    if (raw[k] instanceof CmzAtom) {
+      // families can include pre-created atoms
+      self._addAtom(k, raw[k])
+    } else {
+      // use the family key to make the classname a bit more descriptive
+      self._addAtom(k, new CmzAtom(`${self._prefix}-${k}`, raw[k]))
+    }
   })
 }
 
-function inline (rootName, raw) {
-  const absFilename = caller()
-  const relFilename = relativeToRoot(absFilename)
-  const baseToken = tokenFromRelFilename(relFilename) + '_' + rootName
+CmzFamily.prototype._addAtom = function (key, atom) {
+  // expose atoms directly (but warn if there's a name clash)
+  if (this[key]) {
+    console.warning(`CmzFamily: ${key} already exists`)
+  }
+  this[key] = this._atoms[key] = atom
+}
 
-  return transform(raw, {
-    baseToken: baseToken,
-    filename: absFilename
+// compose 2 families together
+CmzFamily.prototype.compose = function (other) {
+  const self = this
+  Object.keys(other._atoms).forEach(k => {
+    if (self._atoms[k]) {
+      self._atoms[k].compose(other[k])
+    } else {
+      self._addAtom(k, other[k])
+    }
   })
+
+  return this
 }
 
-function transform (raw, opts) {
-  const lazyResult = transformCss.sync(raw, opts)
-  const css = lazyResult.css
-  const scopedNames = lazyResult.result.scopedNames
-
-  const result = Object.assign({}, scopedNames, {
-    '@css': css
-  })
-
-  return result
+function CmzAtom (name, raw) {
+  this.name = name || createName()
+  this.raw = raw
+  this.comps = []
 }
 
-function tokenFromRelFilename (relFilename) {
-  return relFilename.replace(/[\/\\]/g, '_').replace(/\.(.*?)$/, '')
-}
-
-function relativeToRoot (filename) {
-  return filename.substr(rootDir.length + 1)
-}
-
-function getAbsFilename (filename, callerFile) {
-  if (typeof filename !== 'string' || filename === '.') {
-    filename = callerFile.replace(/\.js$/, '.css')
+CmzAtom.prototype.getCss = function () {
+  // if no placeholder was given, wrap the entire thing in a selector
+  if (this.raw.indexOf('&') === -1) {
+    return `.${this.name} {
+${this.raw}
+}`
   }
 
-  const callerDir = path.dirname(callerFile)
-  return path.resolve(callerDir, filename)
+  // otherwise replace the placeholder with the unique name
+  return this.raw.replace(/&/g, `.${this.name}`)
+}
+
+CmzAtom.prototype.toString = function () {
+  // need to call toString() on the comps first,
+  // so that they appear higher in source
+  const fullName = this.getFullName()
+  upsertCss(this.name, this.getCss())
+  return fullName
+}
+
+CmzAtom.prototype.getFullName = function () {
+  return [this.name]
+    .concat(this.comps)
+    .filter(Boolean)
+    .join(' ')
+}
+
+CmzAtom.prototype.compose = function (comps) {
+  if (!Array.isArray(comps)) { comps = [comps] }
+  this.comps = this.comps.concat(comps)
+  return this
 }
 
 module.exports = cmz
-module.exports.inline = inline
-module.exports.transform = transform
-module.exports.compose = browser.compose
-module.exports.tokenFromRelFilename = tokenFromRelFilename
-module.exports.getAbsFilename = getAbsFilename
