@@ -1,33 +1,48 @@
 const upsertCss = require('./lib/upsert-css')
 const createName = require('./lib/create-name')
 
+function isName (val) {
+  if (!val) { return false }
+  return /^[a-zA-Z][a-zA-Z0-9-_]*$/.test(val)
+}
+
 function cmz (prefix, raw) {
-  if (!raw) {
-    raw = prefix
-    prefix = createName()
+  if (!isName(prefix)) {
+    return new CmzAtom(createName(), prefix)
   }
 
-  if (typeof raw === 'string') { return new CmzAtom(prefix, raw) }
-  if (typeof raw === 'object') { return new CmzMod(prefix, raw) }
+  const cons = typeof raw === 'string' ? CmzAtom : CmzMod
+  return new cons(prefix, raw)
 }
 
 function CmzMod (prefix, raw) {
   // we'll use the same prefix for all atoms in this family
   this._prefix = prefix || createName()
   this._atoms = {}
-  if (raw) { this._addAtoms(raw) }
+  if (raw) { this.add(raw) }
 }
 
 CmzMod.prototype.add = function (raw) {
-  return this._addAtoms(raw)
-}
-
-CmzMod.prototype._addAtoms = function (raw) {
   const self = this
   Object.keys(raw).forEach(function (k) {
     if (raw[k] instanceof CmzAtom) {
       // families can include pre-created atoms
       self._addAtom(k, raw[k])
+    } else if (Array.isArray(raw[k])) {
+      var comps = []
+      var rules = []
+      raw[k].forEach(function (item) {
+        if (isName(item)) {
+          comps.push(item)
+        }
+        else {
+          rules.push(item)
+        }
+      })
+      self._addAtom(k, new CmzAtom(self._prefix + '__' + k, rules.join(';\n')))
+      if (comps.length) {
+        self[k].compose(comps)
+      }
     } else {
       // use the family key to make the classname a bit more descriptive
       self._addAtom(k, new CmzAtom(self._prefix + '__' + k, raw[k]))
@@ -101,6 +116,8 @@ CmzAtom.prototype.compose = function (comps) {
   return this
 }
 
+cmz.Mod = CmzMod
+cmz.Atom = CmzAtom
 cmz.reset = createName.reset
 
 module.exports = cmz

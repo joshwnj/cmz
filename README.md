@@ -8,15 +8,15 @@
 
 CSS Modules makes it easy to work with CSS classes that are:
 
-- **immutable**: once we define a class its meaning should not change (so avoid cascading)
-- **composeable**: compose small single-purpose classes together (rather than overriding properties via cascading)
+- **immutable**: once we define a class its meaning should not change (ie. avoid cascading)
+- **composeable**: compose single-purpose classes together (rather than overriding properties via cascading)
 - **meaningful**: classes should be small and single-purpose, but not so small that their purpose becomes unclear.
 
 ## Design Goals
 
 `cmz` differs from other CSS Modules implementations in the following areas:
 
-- Runs in node without any additional tools.
+- Runs in node & the browser without any additional tools.
 - Easy to install and fast to build.
 - Doesn't overload `require` / `import` for importing a CSS Module. We can do this with a normal js function call.
 - Doesn't introduce new CSS syntax for composition and values. We can do this in javascript.
