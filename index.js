@@ -95,4 +95,6 @@ CmzAtom.prototype.compose = function (comps) {
   return this
 }
 
+cmz.reset = createName.reset
+
 module.exports = cmz
