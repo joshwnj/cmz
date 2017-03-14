@@ -4,8 +4,31 @@ const tape = require('tape')
 const cmz = require('../index.js')
 
 tape('compose', function (t) {
+  t.test('Empty atom', (t) => {
+    const atom = cmz('')
+    t.equal(
+      atom.toString(),
+      '',
+      'An atom with no rules does not need a name'
+    )
+
+    t.end()
+  })
+
+  t.test('Empty with composition', (t) => {
+    const atom = cmz('')
+    atom.compose(['aa', 'bb'])
+    t.equal(
+      atom.toString(),
+      'aa bb',
+      'An atom with no rules does not need a name, but can still compose'
+    )
+
+    t.end()
+  })
+
   t.test('Empty composition', (t) => {
-    const atom = cmz(``)
+    const atom = cmz('color: blue')
     const name = atom.name
     atom.compose('')
     t.equal(
@@ -17,7 +40,7 @@ tape('compose', function (t) {
   })
 
   t.test('Single composition', (t) => {
-    const atom = cmz(``)
+    const atom = cmz('overflow: hidden')
     const name = atom.name
     atom.compose('aa')
     t.equal(
@@ -29,7 +52,11 @@ tape('compose', function (t) {
   })
 
   t.test('Multiple composition', (t) => {
-    const atom = cmz(``)
+    const atom = cmz(`
+    @media (min-width: 400) {
+      & { color: blue }
+    } `)
+
     const name = atom.name
     atom.compose(['aa', 'bb'])
     t.equal(
@@ -41,8 +68,8 @@ tape('compose', function (t) {
   })
 
   t.test('Nested composition', (t) => {
-    const a1 = cmz(``).compose(['aa', 'bb'])
-    const a2 = cmz(``).compose([a1, 'cc'])
+    const a1 = cmz('color: green').compose(['aa', 'bb'])
+    const a2 = cmz('color: yellow').compose([a1, 'cc'])
 
     t.equal(
       a2.toString(),

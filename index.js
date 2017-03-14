@@ -65,6 +65,8 @@ function CmzAtom (name, raw) {
 }
 
 CmzAtom.prototype.getCss = function () {
+  if (!this.raw) { return '' }
+
   // if no placeholder was given, wrap the entire thing in a selector
   if (this.raw.indexOf('&') === -1) {
     return '.' + this.name + ' {\n' + this.raw + '\n}'
@@ -78,15 +80,19 @@ CmzAtom.prototype.toString = function () {
   // need to call toString() on the comps first,
   // so that they appear higher in source
   const fullName = this.getFullName()
-  upsertCss(this.name, this.getCss())
+
+  // only need to insert css if we have any
+  const css = this.getCss()
+  css && upsertCss(this.name, css)
+
   return fullName
 }
 
 CmzAtom.prototype.getFullName = function () {
-  return [this.name]
-    .concat(this.comps)
-    .filter(Boolean)
-    .join(' ')
+  const comps = this.comps.join(' ')
+  return this.raw ?
+    this.name + (comps && (' ' + comps)) :
+    comps
 }
 
 CmzAtom.prototype.compose = function (comps) {
