@@ -11,8 +11,7 @@ function cmz (prefix, raw) {
     return new CmzAtom(createName(), prefix)
   }
 
-  const cons = typeof raw === 'string' ? CmzAtom : CmzMod
-  return new cons(prefix, raw)
+  return new (typeof raw === 'string' ? CmzAtom : CmzMod)(prefix, raw)
 }
 
 function CmzMod (prefix, raw) {
@@ -28,24 +27,27 @@ CmzMod.prototype.add = function (raw) {
     if (raw[k] instanceof CmzAtom) {
       // families can include pre-created atoms
       self._addAtom(k, raw[k])
-    } else if (Array.isArray(raw[k])) {
+      return
+    }
+
+    const name = self._prefix + '__' + k
+    if (Array.isArray(raw[k])) {
       var comps = []
       var rules = []
       raw[k].forEach(function (item) {
         if (isName(item)) {
           comps.push(item)
-        }
-        else {
+        } else {
           rules.push(item)
         }
       })
-      self._addAtom(k, new CmzAtom(self._prefix + '__' + k, rules.join(';\n')))
+      self._addAtom(k, new CmzAtom(name, rules.join(';\n')))
       if (comps.length) {
         self[k].compose(comps)
       }
     } else {
       // use the family key to make the classname a bit more descriptive
-      self._addAtom(k, new CmzAtom(self._prefix + '__' + k, raw[k]))
+      self._addAtom(k, new CmzAtom(name, raw[k]))
     }
   })
   return this
@@ -105,9 +107,9 @@ CmzAtom.prototype.toString = function () {
 
 CmzAtom.prototype.getFullName = function () {
   const comps = this.comps.join(' ')
-  return this.raw ?
-    this.name + (comps && (' ' + comps)) :
-    comps
+  return this.raw
+    ? this.name + (comps && (' ' + comps))
+    : comps
 }
 
 CmzAtom.prototype.compose = function (comps) {
