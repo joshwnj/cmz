@@ -85,8 +85,12 @@ function CmzAtom (name, raw) {
   this.comps = []
 }
 
+CmzAtom.prototype.hasCss = function () {
+  return this.raw && this.raw.length > 0
+}
+
 CmzAtom.prototype.getCss = function () {
-  if (!this.raw) { return '' }
+  if (!this.hasCss()) { return '' }
 
   const parts = typeof this.raw === 'string' ? [this.raw] : this.raw
 
@@ -130,7 +134,7 @@ CmzAtom.prototype.toString = function () {
 
 CmzAtom.prototype.getFullName = function () {
   const comps = this.comps.join(' ')
-  return this.raw
+  return this.hasCss()
     ? this.name + (comps && (' ' + comps))
     : comps
 }
