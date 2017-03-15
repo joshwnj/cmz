@@ -35,7 +35,7 @@ CmzMod.prototype.add = function (raw) {
       var comps = []
       var rules = []
       raw[k].forEach(function (item) {
-        if (isName(item)) {
+        if (item instanceof CmzAtom || isName(item)) {
           comps.push(item)
         } else {
           rules.push(item)
