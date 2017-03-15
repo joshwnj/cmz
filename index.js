@@ -114,7 +114,9 @@ CmzAtom.prototype.getCss = function () {
 
   if (wrapped.length) {
     // replace the placeholder with the unique name
-    output += wrapped.map(part => part.replace(/&/g, selector)).join('\n')
+    output += wrapped.map(function (part) {
+      return part.replace(/&/g, selector)
+    }).join('\n')
   }
 
   return output
