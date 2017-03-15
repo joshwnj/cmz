@@ -6,6 +6,10 @@ function isName (val) {
   return /^[a-zA-Z][a-zA-Z0-9-_]*$/.test(val)
 }
 
+function addSemis (raw) {
+  return raw.replace(/([^;])\n/g, '$1;\n')
+}
+
 function cmz (prefix, raw) {
   if (!isName(prefix)) {
     return new CmzAtom(createName(), prefix)
@@ -41,7 +45,7 @@ CmzMod.prototype.add = function (raw) {
           rules.push(item)
         }
       })
-      self._addAtom(k, new CmzAtom(name, rules.join(';\n')))
+      self._addAtom(k, new CmzAtom(name, rules))
       if (comps.length) {
         self[k].compose(comps)
       }
@@ -84,13 +88,32 @@ function CmzAtom (name, raw) {
 CmzAtom.prototype.getCss = function () {
   if (!this.raw) { return '' }
 
-  // if no placeholder was given, wrap the entire thing in a selector
-  if (this.raw.indexOf('&') === -1) {
-    return '.' + this.name + ' {\n' + this.raw + '\n}'
+  const parts = typeof this.raw === 'string' ? [this.raw] : this.raw
+
+  const wrapped = []
+  const unwrapped = []
+  parts.forEach(function (part) {
+    // if no placeholder was given, we need to wrap it ourselves
+    const isWrapped = part.indexOf('&') >= 0
+    const group = isWrapped ? wrapped : unwrapped
+    group.push(part)
+  })
+
+  const selector = '.' + this.name
+  var output = ''
+
+  if (unwrapped.length) {
+    output += selector + ' {' + addSemis(unwrapped.join('\n')) + '}'
+
+    if (wrapped.length) { output += '\n' }
   }
 
-  // otherwise replace the placeholder with the unique name
-  return this.raw.replace(/&/g, '.' + this.name)
+  if (wrapped.length) {
+    // replace the placeholder with the unique name
+    output += wrapped.map(part => part.replace(/&/g, selector)).join('\n')
+  }
+
+  return output
 }
 
 CmzAtom.prototype.toString = function () {
