@@ -25,6 +25,10 @@ function CmzMod (prefix, raw) {
   if (raw) { this.add(raw) }
 }
 
+CmzMod.prototype.getAtoms = function () {
+  return this._atoms
+}
+
 CmzMod.prototype.add = function (raw) {
   const self = this
   Object.keys(raw).forEach(function (k) {
