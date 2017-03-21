@@ -1,10 +1,9 @@
 {
   "name": "cmz",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "CSS Modules Zero",
   "main": "index.js",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "browserify": "^14.0.0",
     "standard": "^9.0.0",
