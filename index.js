@@ -10,12 +10,21 @@ function addSemis (raw) {
   return raw.replace(/([^;])\n/g, '$1;\n')
 }
 
-function cmz (prefix, raw) {
-  if (!isName(prefix)) {
-    return new CmzAtom(createName(), prefix)
+function cmz (a1, a2) {
+  // factory
+  if (typeof a1 === 'function') {
+    return function (data) {
+      const func = a1
+      const name = func.name + '--' + data
+      return cmz(name, func(data))
+    }
   }
 
-  return new (typeof raw === 'string' ? CmzAtom : CmzMod)(prefix, raw)
+  if (!isName(a1)) {
+    return new CmzAtom(createName(), a1)
+  }
+
+  return new (typeof a2 === 'string' ? CmzAtom : CmzMod)(a1, a2)
 }
 
 function CmzMod (prefix, raw) {
