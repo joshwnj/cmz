@@ -138,6 +138,32 @@ This produces classes like `MyComponent__heading` and `MyComponent__mainImage`. 
 
 So on one level it's doing the same thing as a naming convention (like BEM or SUIT) but in an easier & more automated way.
 
+### Are animations automatically scoped?
+
+By default, animations are left untouched. But you can create unique animation names by using the `?` placeholder. The animation will be created with the same base-name as the class:
+
+```js
+const fadeAnim = cmz(`
+  & {
+    animation: ? 1s infinite;
+  }
+
+  @keyframes ? {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+`)
+```
+
+Because the animation is coupled with a class, they can be applied as compositions, eg:
+
+```js
+const myFadingThing = cmz([
+  'width: 50%',
+  fadeAnim
+])
+```
+
 ### Does `cmz` add vendor-prefixes?
 
 Not yet, but it will soon :)

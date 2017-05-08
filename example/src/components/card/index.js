@@ -1,5 +1,16 @@
 const cmz = require('cmz')
 
+const fadeAnim = cmz(`
+  & {
+    animation: ? 1s infinite;
+  }
+
+  @keyframes ? {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+`)
+
 const styles = cmz('Card', {
   root: `
     width: 200px;
@@ -17,9 +28,10 @@ const styles = cmz('Card', {
     background: #EEE;
     border-radius: 4px;
 `,
-  image: `
-    width: 80%;
-`
+  image: [
+    'width: 80%',
+    fadeAnim
+  ]
 })
 
 module.exports = function (props) {
