@@ -107,17 +107,21 @@ CmzAtom.prototype.getCss = function () {
 
   const parts = typeof this.raw === 'string' ? [this.raw] : this.raw
 
+  const name = this.name
+  const selector = '.' + name
+  var output = ''
+
   const wrapped = []
   const unwrapped = []
   parts.forEach(function (part) {
-    // if no placeholder was given, we need to wrap it ourselves
+    // replace name placeholders
+    part = part.replace(/\?/g, name)
+
+    // if no selector placeholder was given, we need to wrap it ourselves
     const isWrapped = part.indexOf('&') >= 0
     const group = isWrapped ? wrapped : unwrapped
     group.push(part)
   })
-
-  const selector = '.' + this.name
-  var output = ''
 
   if (unwrapped.length) {
     output += selector + ' {' + addSemis(unwrapped.join('\n')) + '}'
@@ -126,7 +130,7 @@ CmzAtom.prototype.getCss = function () {
   }
 
   if (wrapped.length) {
-    // replace the placeholder with the unique name
+    // replace selector placeholders with the unique selector
     output += wrapped.map(function (part) {
       return part.replace(/&/g, selector)
     }).join('\n')
