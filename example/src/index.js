@@ -31,9 +31,9 @@ const box = cmz('box', [
   'width: 500px',
   'margin: 20px auto',
   'padding: 20px',
-  widerThan(600, 'color: green'),
-  widerThan(800, 'color: blue'),
-  widerThan(1024, 'color: red'),
+  widerThan(600, 'color: lightseagreen'),
+  widerThan(800, 'color: royalblue'),
+  widerThan(1024, 'color: coral'),
 ])
 
 // you can also create an atom by composing existing atoms:
@@ -53,6 +53,9 @@ const smallText = cmz([
   fontSize(1),
   'font-weight: 800'
 ])
+
+// cmz.import is a shortcut to @import url(...)
+cmz.import('src/theme.css')
 
 const html = `
   <div ${attr(cmz([bigText, shadow]))}>big condensed text with a shadow</div>

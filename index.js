@@ -18,6 +18,11 @@ function cmz (name, raw) {
   return new Atom(name, raw)
 }
 
+cmz.import = function (path) {
+  const name = 'import-' + path
+  upsertCss(name, '@import url("' + path + '");')
+}
+
 function Atom (name, raw) {
   this.name = name || createName()
 
