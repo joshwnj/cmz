@@ -74,38 +74,35 @@ A useful pattern with CSS Modules is to define a library of common styles, and t
 
 import cmz from 'cmz'
 
-export default cmz('Typo', {
-  bigText: `
-    font-size: 48px;
-    letter-spacing: .1rem;
-    text-transform: uppercase;
-  `,
+export const bigText = cmz(`
+  font-size: 48px
+  letter-spacing: .1rem
+  text-transform: uppercase
+`)
 
-  highlight: `
-    color: cyan;
-    font-weight: bold;
-  `
-})
+export const highlight = cmz(`
+  color: cyan;
+  font-weight: bold;
+`)
 ```
 
 ```js
 // heading.js
 
 import cmz from 'cmz'
-import typography from './typography.js'
+import typo from './typography'
 
 const heading = cmz(`
-  padding: 16px;
-  border-bottom: 1px solid #000;
+  padding: 16px
+  border-bottom: 1px solid #000
 `).compose([
-  typography.bigText,
-  typography.highlight
+  typo.bigText,
+  typo.highlight
 ])
 
 export default function () {
   return `<h1 class="${heading}">cmz demo</h1>`
 }
-
 ```
 
 The `.compose` function doesn't mutate any styles, it only adds extra classes to the DOM element.
@@ -119,24 +116,6 @@ In future there will be a plugin that extracts this css out of the js bundle to 
 ### Will `cmz` generate unique classnames?
 
 Yes, this is an important part of the CSS Modules approach, so that we avoid accidental name collisions.
-
-To get the most readable classnames in `cmz`, it's recommended to create "modules" rather than single classes, and provide a meaningful prefix. eg:
-
-```js
-const MyComponent = cmz('MyComponent', {
-  heading: `
-  ...
-  `,
-
-  mainImage: `
-  ...
-  `
-})
-```
-
-This produces classes like `MyComponent__heading` and `MyComponent__mainImage`. It also will warn you if you try to create 2 modules with the same name. This fulfills the "classnames must be unique" constraint, and produces names that are very easy to read & debug from devtools.
-
-So on one level it's doing the same thing as a naming convention (like BEM or SUIT) but in an easier & more automated way.
 
 ### Are animations automatically scoped?
 
