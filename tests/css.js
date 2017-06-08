@@ -5,7 +5,7 @@ const cmz = require('../index.js')
 
 tape('css', function (t) {
   t.test('atom with multiple rules', t => {
-    const a = new cmz.Atom('atom', [
+    const a = cmz('atom', [
       'a: 1',
       '&:hover { c: 3 }',
       'b: 2'
