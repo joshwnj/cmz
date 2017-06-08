@@ -1,5 +1,7 @@
 # cmz
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/joshwnj/cmz.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://secure.travis-ci.org/joshwnj/cmz.png)](http://travis-ci.org/joshwnj/cmz)
 
 **CSS Modules Zero:** A low-sugar variant of CSS Modules that runs in node and in the browser.
