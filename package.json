@@ -36,5 +36,10 @@
   "bugs": {
     "url": "https://github.com/joshwnj/cmz/issues"
   },
-  "homepage": "https://github.com/joshwnj/cmz#readme"
+  "homepage": "https://github.com/joshwnj/cmz#readme",
+  "directories": {
+    "example": "example",
+    "lib": "lib",
+    "test": "tests"
+  }
 }
