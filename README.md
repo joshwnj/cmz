@@ -109,6 +109,27 @@ export default function () {
 
 The `.compose` function doesn't mutate any styles, it only adds extra classes to the DOM element.
 
+### Composition with pseudoselectors
+
+Sometimes you have an atom that you want to compose, but within the scope of a pseudoselector. Traditionally, if you wanted to change the classes applied to an element on hover, you'd need to do that with javascript.
+
+`cmz.pseudo` allows us to create new atoms from old ones that are wrapped in a pseudoselector.  For example:
+
+```js
+// say we've got an existing atom:
+const pinkFancyText = cmz(`
+  color: hotpink
+  font-style: italic
+`)
+
+// but we only want our element to be pink and fancy when it is hovered:
+const elemStyle = cmz(`
+  width: 500px
+`).compose(
+  cmz.pseudo('hover', pinkFancyText)
+)
+```
+
 ### Can `cmz` generate a `.css` file?
 
 At the moment `cmz` adds all css to the page at runtime via a `<style>` tag. In a lot of cases this is fine, and will save you a network request as it's all bundled in the one `.js` file.
