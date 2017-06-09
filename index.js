@@ -1,5 +1,5 @@
 const upsertCss = require('./lib/upsert-css')
-const createName = require('./lib/create-name')
+const uniquifyName = require('./lib/uniquify-name')
 
 function isName (val) {
   if (!val) { return false }
@@ -24,7 +24,7 @@ cmz.import = function (path) {
 }
 
 function Atom (name, raw) {
-  this.name = name || createName()
+  this.name = uniquifyName(name)
 
   this.raw = []
   this.comps = []
@@ -102,6 +102,6 @@ Atom.prototype.getFullName = function () {
 }
 
 cmz.Atom = Atom
-cmz.reset = createName.reset
+cmz.reset = uniquifyName.reset
 
 module.exports = cmz
