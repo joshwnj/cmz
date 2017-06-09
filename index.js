@@ -25,9 +25,9 @@ cmz.pseudo = function (type, atom) {
     // pseudo-ify raw parts
     atom.raw.map(r => {
       const isWrapped = r.indexOf('{') >= 0
-      return isWrapped ?
-        r.replace(/&/g, selector) :
-        selector + '{ ' + r + ' }'
+      return isWrapped
+        ? r.replace(/&/g, selector)
+        : selector + '{ ' + r + ' }'
     })
   ).compose(
     // recursively pseudo-ify compositions
