@@ -18,6 +18,25 @@ function cmz (name, raw) {
   return new Atom(name, raw)
 }
 
+cmz.pseudo = function (type, atom) {
+  const selector = '&:' + type
+  const p = new Atom(
+    atom.name + '-' + type,
+    // pseudo-ify raw parts
+    atom.raw.map(r => {
+      const isWrapped = r.indexOf('{') >= 0
+      return isWrapped ?
+        r.replace(/&/g, selector) :
+        selector + '{ ' + r + ' }'
+    })
+  ).compose(
+    // recursively pseudo-ify compositions
+    atom.comps.map(c => cmz.pseudo(type, c))
+  )
+
+  return p
+}
+
 cmz.import = function (path) {
   const name = 'import-' + path
   upsertCss(name, '@import url("' + path + '");')

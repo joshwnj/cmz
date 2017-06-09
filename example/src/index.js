@@ -2,7 +2,7 @@ const cmz = require('cmz')
 const attr = require('cmz/attr').string
 
 // you can define atoms that define common rules
-const shadow = cmz('shadow', `
+const shadow = cmz(`
   box-shadow: 1px 1px 5px #000
 `)
 
@@ -33,13 +33,15 @@ const box = cmz('box', [
   'padding: 20px',
   widerThan(600, 'color: lightseagreen'),
   widerThan(800, 'color: royalblue'),
-  widerThan(1024, 'color: coral'),
+  widerThan(1024, 'color: coral')
 ])
 
 // you can also create an atom by composing existing atoms:
 const bigText = cmz([
   box,
-  fontSize(3)
+  fontSize(3),
+  // you can take an existing atom and apply it with a pseudo-selector
+  cmz.pseudo('hover', require('./effects').pulse)
 ])
 
 const medText = cmz([
