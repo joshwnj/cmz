@@ -6,6 +6,12 @@
 
 **CSS Modules Zero:** A low-sugar variant of CSS Modules that runs in node and in the browser.
 
+## Example
+
+- [take a look at the example](https://github.com/joshwnj/cmz/tree/master/example) or [view it online](https://joshwnj.github.io/cmz/)
+- you can also [try it out on codepen](http://codepen.io/joshwnj/pen/zZNERK?editors=0010#0
+)
+
 ## Principles of CSS Modules
 
 CSS Modules makes it easy to work with CSS classes that are:
@@ -18,8 +24,8 @@ CSS Modules makes it easy to work with CSS classes that are:
 
 `cmz` differs from other CSS Modules implementations in the following areas:
 
-- Runs in node & the browser without any additional tools.
-- Easy to install and fast to build.
+- Faster to install & build.
+- Runs in node & the browser without any additional tools (but we can use a [babel plugin](https://github.com/joshwnj/babel-plugin-cmz-names) to enhance & optimise).
 - Doesn't overload `require` / `import` for importing a CSS Module. We can do this with a normal js function call.
 - Doesn't introduce new CSS syntax for composition and values. We can do this in javascript.
 
@@ -130,21 +136,23 @@ const elemStyle = cmz(`
 )
 ```
 
-### Can `cmz` generate a `.css` file?
-
-At the moment `cmz` adds all css to the page at runtime via a `<style>` tag. In a lot of cases this is fine, and will save you a network request as it's all bundled in the one `.js` file.
-
-In future there will be a plugin that extracts this css out of the js bundle to a separate `.css` file. If that is important to you I'd love to help you make a PR :)
-
-There's a [WIP example of this](https://github.com/joshwnj/cmz/tree/master/example) which includes:
-
-- server-side rendering
-- splitting generated css into a separate bundle
-- nicer classnames, via [babel-plugin-cmz-names](https://github.com/joshwnj/babel-plugin-cmz-names)
-
 ### Will `cmz` generate unique classnames?
 
 Yes, this is an important part of the CSS Modules approach, so that we avoid accidental name collisions.
+
+### Can `cmz` generate a `.css` file?
+
+Yes!
+
+By default `cmz` adds all css to the page at runtime via a `<style>` tag. In a lot of cases this is fine, and will save you a network request as it's all bundled in the one `.js` file.
+
+To extract css to a separate `.css` file (and result in a smaller `.js` bundle) there are 3 steps:
+
+- create the js bundle as usual, with the [cmz-names](https://github.com/joshwnj/babel-plugin-cmz-names) babel plugin
+- server-side-render your frontend, so that `cmz` can collect all of the necessary styles and write a `.css` file
+- run the `cmz-min` script to trim the extracted css rules from your js bundle
+
+To see this in action take a look at the [example](https://github.com/joshwnj/cmz/tree/master/example).
 
 ### Are animations automatically scoped?
 
@@ -174,13 +182,7 @@ const myFadingThing = cmz([
 
 ### Does `cmz` add vendor-prefixes?
 
-Not yet, but it will soon :)
-
-### Can I see an example of this?
-
-Yes! There are still a few things to add, but you can see the WIP in the [example](https://github.com/joshwnj/cmz/tree/master/example) directory. Or view it online: <https://joshwnj.github.io/cmz/>
-
-You can also [try it out on codepen](http://codepen.io/joshwnj/pen/zZNERK?editors=0010#0)
+Not yet, but it will soon :) If this is important to you I'd love to help you make a PR :)
 
 ## Thanks
 
