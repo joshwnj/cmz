@@ -136,6 +136,12 @@ At the moment `cmz` adds all css to the page at runtime via a `<style>` tag. In 
 
 In future there will be a plugin that extracts this css out of the js bundle to a separate `.css` file. If that is important to you I'd love to help you make a PR :)
 
+There's a [WIP example of this](https://github.com/joshwnj/cmz/tree/master/example) which includes:
+
+- server-side rendering
+- splitting generated css into a separate bundle
+- nicer classnames, via [babel-plugin-cmz-names](https://github.com/joshwnj/babel-plugin-cmz-names)
+
 ### Will `cmz` generate unique classnames?
 
 Yes, this is an important part of the CSS Modules approach, so that we avoid accidental name collisions.
