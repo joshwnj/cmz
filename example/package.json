@@ -24,7 +24,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "browserify": {
-    "transform": [ "babelify" ]
+    "transform": [
+      "babelify"
+    ]
   },
   "keywords": [],
   "author": "joshwnj",
