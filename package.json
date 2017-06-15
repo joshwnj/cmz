@@ -9,9 +9,9 @@
   },
   "devDependencies": {
     "browserify": "^14.4.0",
-    "standard": "^10.0.1",
+    "standard": "^10.0.2",
     "tap-spec": "^4.1.1",
-    "tape": "^4.6.0",
+    "tape": "^4.6.3",
     "uglify-es": "^3.0.15"
   },
   "scripts": {
@@ -22,7 +22,7 @@
     "build:minify": "uglifyjs -o dist/cmz.min.js dist/cmz.js",
     "lint": "standard",
     "test": "tape tests/*.js | tap-spec",
-    "prepublish": "npm run lint && npm test && npm run build"
+    "pre-publish": "npm run lint && npm test && npm run build"
   },
   "repository": {
     "type": "git",
