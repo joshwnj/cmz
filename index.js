@@ -114,10 +114,7 @@ Atom.prototype.toString = function () {
 }
 
 Atom.prototype.getFullName = function () {
-  const comps = this.comps.join(' ')
-  return this.hasCss()
-    ? this.name + (comps && (' ' + comps))
-    : comps
+  return [ this.name ].concat(this.comps).join(' ')
 }
 
 cmz.Atom = Atom

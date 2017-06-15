@@ -8,8 +8,8 @@ tape('compose', function (t) {
     const atom = cmz('')
     t.equal(
       atom.toString(),
-      '',
-      'An atom with no rules does not need a name'
+      'cmz-0',
+      'An atom with no rules still gets a name'
     )
 
     t.end()
@@ -20,8 +20,8 @@ tape('compose', function (t) {
     atom.compose(['aa', 'bb'])
     t.equal(
       atom.toString(),
-      'aa bb',
-      'An atom with no rules does not need a name, but can still compose'
+      'cmz-1 aa bb',
+      'An atom with compositions but no rules still gets a name'
     )
 
     t.end()
