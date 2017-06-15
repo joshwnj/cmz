@@ -122,5 +122,5 @@ Atom.prototype.getFullName = function () {
 
 cmz.Atom = Atom
 cmz.reset = uniquifyName.reset
-
+cmz.sheets = upsertCss.sheets
 module.exports = cmz
