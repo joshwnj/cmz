@@ -16,8 +16,9 @@
     "watchify": "^3.7.0"
   },
   "scripts": {
-    "build-tpl": "node src/build-tpl",
-    "build": "npm run build-tpl && browserify -o dist/bundle.js src/index.js",
+    "cmz-min": "cmz-min dist/bundle.js > dist/bundle.min.js",
+    "build-tpl": "node -r babel-register src/build-tpl",
+    "build": "npm run build-tpl && browserify -o dist/bundle.js src/index.js && npm run cmz-min",
     "watch": "npm run build-tpl && watchify -v -o dist/bundle.js src/index.js",
     "hot": "npm run build-tpl && watchify -v -p browserify-hmr -o dist/bundle.js src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
