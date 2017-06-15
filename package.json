@@ -4,6 +4,9 @@
   "description": "CSS Modules Zero",
   "main": "index.js",
   "dependencies": {},
+  "bin": {
+    "cmz-min": "bin/min.js"
+  },
   "devDependencies": {
     "browserify": "^14.4.0",
     "standard": "^10.0.1",
