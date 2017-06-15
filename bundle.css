@@ -1,0 +1,43 @@
+
+@media screen and (min-width: 600px) {
+  .cmz-1 {
+    color: lightseagreen
+  }
+}
+
+
+@media screen and (min-width: 800px) {
+  .cmz-2 {
+    color: royalblue
+  }
+}
+
+
+@media screen and (min-width: 1024px) {
+  .cmz-3 {
+    color: coral
+  }
+}
+
+.cmz-6 { color: red; }
+.cmz-6-hover:hover { color: red; }
+.box {width: 500px;
+margin: 20px auto;
+padding: 20px}
+.cmz-4 {font-size: 43px;
+letter-spacing: -.07em}
+
+  .cmz-7-hover:hover {
+    animation: cmz-7-hover 1s infinite;
+  }
+
+  @keyframes cmz-7-hover {
+    0% { opacity: 1; }
+    50% { opacity: .5; }
+  }
+  
+.cmz-10 {font-size: 24px}
+.cmz-12 {font-size: 17px}
+@import url("./theme.css");
+.cmz-0 {box-shadow: 1px 1px 5px #000}
+.cmz-13 {font-weight: 800}
