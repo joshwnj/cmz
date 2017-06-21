@@ -8,9 +8,19 @@ const content = require('./index')
 const sheets = cmz.sheets
 const css = Object.keys(sheets).map((id) => sheets[id]).join('\n')
 
+// switch this to false if you want css in a separate file
+const inlineCss = true
+
 const dir = path.join(__dirname, '..', 'dist')
 const cssFilename = 'bundle.css'
-fs.writeFileSync(path.join(dir, cssFilename), css)
+
+if (!inlineCss) {
+  fs.writeFileSync(path.join(dir, cssFilename), css)
+}
+
+const cssTag = inlineCss
+  ? `<style>${css}</style>`
+  : `<link href="./${cssFilename}" rel="stylesheet" type="text/css" />`
 
 const tpl = `<!doctype html>
 <html>
@@ -18,7 +28,7 @@ const tpl = `<!doctype html>
     <meta charset="utf-8">
     <title>cmz demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="./${cssFilename}" rel="stylesheet" type="text/css" />
+    ${cssTag}
   </head>
   <body>
     <div id="root">${content}</div>
