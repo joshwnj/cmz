@@ -14,24 +14,21 @@ const fontSize = (size) => cmz([
   size > 2 && `letter-spacing: -.07em`
 ])
 
-// you can create helper functions that construct css,
-// like applying rules when the viewport is wider than a certain width
-const widerThan = (width, css) => cmz(`
-@media screen and (min-width: ${width}px) {
-  & {
-    ${css}
-  }
+const boxVariants = {
+  small: cmz('color: lightseagreen'),
+  medium: cmz('color: royalblue'),
+  large: cmz('color: coral')
 }
-`)
 
 // you can create an atom by combining css rules:
 const box = cmz('box', [
   'width: 500px',
   'margin: 20px auto',
   'padding: 20px',
-  widerThan(600, 'color: lightseagreen'),
-  widerThan(800, 'color: royalblue'),
-  widerThan(1024, 'color: coral')
+  // you can wrap an atom in a media query
+  cmz.widerThan(600, boxVariants.small),
+  cmz.widerThan(800, boxVariants.medium),
+  cmz.widerThan(1024, boxVariants.large),
 ])
 
 // you can also create an atom by composing existing atoms:
@@ -54,8 +51,15 @@ const smallText = cmz([
   'font-weight: 800'
 ])
 
-// cmz.import is a shortcut to @import url(...)
-cmz.import('./theme.css')
+// and even just write some good old global css
+// (it is applied to the document when we toString it)
+cmz(`
+body {
+  padding: 0;
+  margin: 0;
+  background: azure;
+}
+`).toString()
 
 module.exports = function (props) {
   return `
