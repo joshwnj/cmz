@@ -10,6 +10,40 @@ function addSemis (raw) {
   return raw.replace(/([^;])\n/g, '$1;\n')
 }
 
+function renderCss (name, pseudo, raw) {
+  const selector = '.' + name + (pseudo ? ':' + pseudo : '')
+  var output = ''
+
+  const parts = typeof raw === 'string' ? [raw] : raw
+
+  const wrapped = []
+  const unwrapped = []
+  parts.forEach(function (part) {
+    // replace name placeholders
+    part = part.replace(/\?/g, name)
+
+    // if no selector placeholder was given, we need to wrap it ourselves
+    const isWrapped = part.indexOf('{') >= 0
+    const group = isWrapped ? wrapped : unwrapped
+    group.push(part)
+  })
+
+  if (unwrapped.length) {
+    output += selector + ' {' + addSemis(unwrapped.join('\n')) + '}'
+
+    if (wrapped.length) { output += '\n' }
+  }
+
+  if (wrapped.length) {
+    // replace selector placeholders with the unique selector
+    output += wrapped.map(function (part) {
+      return part.replace(/&/g, selector)
+    }).join('\n')
+  }
+
+  return output
+}
+
 function cmz (name, raw) {
   if (raw === undefined) {
     raw = name
@@ -19,27 +53,27 @@ function cmz (name, raw) {
 }
 
 cmz.pseudo = function (type, atom) {
-  const selector = '&:' + type
-  const p = new Atom(
-    atom.name + '-' + type,
-    // pseudo-ify raw parts
-    atom.raw.map(r => {
-      const isWrapped = r.indexOf('{') >= 0
-      return isWrapped
-        ? r.replace(/&/g, selector)
-        : selector + '{ ' + r + ' }'
-    })
+  const name = atom.name + '-' + type
+  return new Atom(
+    name,
+    renderCss(name, type, atom.raw)
   ).compose(
     // recursively pseudo-ify compositions
     atom.comps.map(c => cmz.pseudo(type, c))
   )
-
-  return p
 }
 
-cmz.import = function (path) {
-  const name = 'import-' + path
-  upsertCss(name, '@import url("' + path + '");')
+cmz.widerThan = function (width, atom) {
+  const name = atom.name + '-widerThan-' + width
+  const css = renderCss(name, null, atom.raw)
+  return new Atom(
+    name,
+    `
+@media screen and (min-width: ${width}px) {
+  ${css}
+}
+`
+  )
 }
 
 function Atom (name, raw) {
@@ -69,38 +103,8 @@ Atom.prototype.hasCss = function () {
 Atom.prototype.getCss = function () {
   if (!this.hasCss()) { return '' }
 
-  const parts = typeof this.raw === 'string' ? [this.raw] : this.raw
-
   const name = this.name
-  const selector = '.' + name
-  var output = ''
-
-  const wrapped = []
-  const unwrapped = []
-  parts.forEach(function (part) {
-    // replace name placeholders
-    part = part.replace(/\?/g, name)
-
-    // if no selector placeholder was given, we need to wrap it ourselves
-    const isWrapped = part.indexOf('{') >= 0
-    const group = isWrapped ? wrapped : unwrapped
-    group.push(part)
-  })
-
-  if (unwrapped.length) {
-    output += selector + ' {' + addSemis(unwrapped.join('\n')) + '}'
-
-    if (wrapped.length) { output += '\n' }
-  }
-
-  if (wrapped.length) {
-    // replace selector placeholders with the unique selector
-    output += wrapped.map(function (part) {
-      return part.replace(/&/g, selector)
-    }).join('\n')
-  }
-
-  return output
+  return renderCss(name, null, this.raw)
 }
 
 Atom.prototype.toString = function () {
