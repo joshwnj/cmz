@@ -6,23 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
 @media screen and (min-width: 600px) {
-  .src_demo-19 {
-    color: lightseagreen
-  }
+  .src_demo-18-widerThan-600 {color: lightseagreen}
 }
 
 
 @media screen and (min-width: 800px) {
-  .src_demo-19-1 {
-    color: royalblue
-  }
+  .src_demo-19-widerThan-800 {color: royalblue}
 }
 
 
 @media screen and (min-width: 1024px) {
-  .src_demo-19-2 {
-    color: coral
-  }
+  .src_demo-20-widerThan-1024 {color: coral}
 }
 
 .src_effects-8 { color: red; }
@@ -44,15 +38,21 @@ letter-spacing: -.07em}
   
 .src_demo-9-1 {font-size: 24px}
 .src_demo-9-2 {font-size: 17px}
-@import url("./theme.css");
+
+body {
+  padding: 0;
+  margin: 0;
+  background: azure;
+}
+
 .src_demo-5 {box-shadow: 1px 1px 5px #000}
-.src_demo-51 {font-weight: 800}</style>
+.src_demo-48 {font-weight: 800}</style>
   </head>
   <body>
     <div id="root">
-  <div class="src_demo-62 src_demo-38 box src_demo-19 src_demo-19-1 src_demo-19-2 src_demo-9 src_effects-10-hover src_effects-8-hover src_demo-5">big condensed text with a shadow</div>
-  <div class="src_demo-45 box src_demo-19 src_demo-19-1 src_demo-19-2 src_demo-9-1">medium text</div>
-  <div class="src_demo-51 box src_demo-19 src_demo-19-1 src_demo-19-2 src_demo-9-2">small bold text</div>
+  <div class="src_demo-66 src_demo-35 box src_demo-18-widerThan-600 src_demo-19-widerThan-800 src_demo-20-widerThan-1024 src_demo-9 src_effects-10-hover src_effects-8-hover src_demo-5">big condensed text with a shadow</div>
+  <div class="src_demo-42 box src_demo-18-widerThan-600 src_demo-19-widerThan-800 src_demo-20-widerThan-1024 src_demo-9-1">medium text</div>
+  <div class="src_demo-48 box src_demo-18-widerThan-600 src_demo-19-widerThan-800 src_demo-20-widerThan-1024 src_demo-9-2">small bold text</div>
 </div>
     <script src="./bundle.min.js"></script>
   </body>

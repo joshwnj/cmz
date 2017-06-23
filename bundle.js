@@ -25,37 +25,41 @@ const fontSize = size => cmz('src_demo-9', [
 `font-size: ${size * size * size + BASE_SIZE}px`,
 
 // big text will be condensed, smaller text is normal
-size > 2 && `letter-spacing: -.07em`]
+size > 2 && `letter-spacing: -.07em`]);
 
-// you can create helper functions that construct css,
-// like applying rules when the viewport is wider than a certain width
-);const widerThan = (width, css) => cmz('src_demo-19', `
-@media screen and (min-width: ${width}px) {
-  & {
-    ${css}
-  }
-}
-`
+const boxVariants = {
+  small: cmz('src_demo-18', /*cmz|*/'color: lightseagreen' /*|cmz*/),
+  medium: cmz('src_demo-19', /*cmz|*/'color: royalblue' /*|cmz*/),
+  large: cmz('src_demo-20', /*cmz|*/'color: coral' /*|cmz*/)
 
-// you can create an atom by combining css rules:
-);const box = cmz('box', [/*cmz|*/'width: 500px' /*|cmz*/, /*cmz|*/'margin: 20px auto' /*|cmz*/, /*cmz|*/'padding: 20px' /*|cmz*/, widerThan(600, 'color: lightseagreen'), widerThan(800, 'color: royalblue'), widerThan(1024, 'color: coral')]
+  // you can create an atom by combining css rules:
+};const box = cmz('box', [/*cmz|*/'width: 500px' /*|cmz*/, /*cmz|*/'margin: 20px auto' /*|cmz*/, /*cmz|*/'padding: 20px' /*|cmz*/,
+// you can wrap an atom in a media query
+cmz.widerThan(600, boxVariants.small), cmz.widerThan(800, boxVariants.medium), cmz.widerThan(1024, boxVariants.large)]
 
 // you can also create an atom by composing existing atoms:
-);const bigText = cmz('src_demo-38', [box, fontSize(3),
+);const bigText = cmz('src_demo-35', [box, fontSize(3),
 // you can take an existing atom and apply it with a pseudo-selector
 cmz.pseudo('hover', require('./effects').pulse)]);
 
-const medText = cmz('src_demo-45', [box, fontSize(2)]
+const medText = cmz('src_demo-42', [box, fontSize(2)]
 
 // or a comnbination of the two
-);const smallText = cmz('src_demo-51', [box, fontSize(1), /*cmz|*/'font-weight: 800' /*|cmz*/]
+);const smallText = cmz('src_demo-48', [box, fontSize(1), /*cmz|*/'font-weight: 800' /*|cmz*/]
 
-// cmz.import is a shortcut to @import url(...)
-);cmz.import('./theme.css');
+// and even just write some good old global css
+// (it is applied to the document when we toString it)
+);cmz('src_demo-56', /*cmz|*/`
+body {
+  padding: 0;
+  margin: 0;
+  background: azure;
+}
+` /*|cmz*/).toString();
 
 module.exports = function (props) {
   return `
-  <div ${attr(cmz('src_demo-62', [bigText, shadow]))}>big condensed text with a shadow</div>
+  <div ${attr(cmz('src_demo-66', [bigText, shadow]))}>big condensed text with a shadow</div>
   <div ${attr(medText)}>medium text</div>
   <div ${attr(smallText)}>small bold text</div>
 `;
@@ -124,70 +128,11 @@ function addSemis (raw) {
   return raw.replace(/([^;])\n/g, '$1;\n')
 }
 
-function cmz (name, raw) {
-  if (raw === undefined) {
-    raw = name
-    name = null
-  }
-  return new Atom(name, raw)
-}
-
-cmz.pseudo = function (type, atom) {
-  const selector = '&:' + type
-  const p = new Atom(
-    atom.name + '-' + type,
-    // pseudo-ify raw parts
-    atom.raw.map(r => {
-      const isWrapped = r.indexOf('{') >= 0
-      return isWrapped
-        ? r.replace(/&/g, selector)
-        : selector + '{ ' + r + ' }'
-    })
-  ).compose(
-    // recursively pseudo-ify compositions
-    atom.comps.map(c => cmz.pseudo(type, c))
-  )
-
-  return p
-}
-
-cmz.import = function (path) {
-  const name = 'import-' + path
-  upsertCss(name, '@import url("' + path + '");')
-}
-
-function Atom (name, raw) {
-  this.name = uniquifyName(name)
-
-  this.raw = []
-  this.comps = []
-  this.compose(raw)
-}
-
-Atom.prototype.compose = function (parts) {
-  if (!Array.isArray(parts)) { parts = [parts] }
-
-  const self = this
-  parts.filter(Boolean).forEach(function (p) {
-    const isComp = isName(p) || p instanceof Atom
-    self[isComp ? 'comps' : 'raw'].push(p)
-  })
-
-  return this
-}
-
-Atom.prototype.hasCss = function () {
-  return this.raw && this.raw.length
-}
-
-Atom.prototype.getCss = function () {
-  if (!this.hasCss()) { return '' }
-
-  const parts = typeof this.raw === 'string' ? [this.raw] : this.raw
-
-  const name = this.name
-  const selector = '.' + name
+function renderCss (name, pseudo, raw) {
+  const selector = '.' + name + (pseudo ? ':' + pseudo : '')
   var output = ''
+
+  const parts = typeof raw === 'string' ? [raw] : raw
 
   const wrapped = []
   const unwrapped = []
@@ -217,6 +162,69 @@ Atom.prototype.getCss = function () {
   return output
 }
 
+function cmz (name, raw) {
+  if (raw === undefined) {
+    raw = name
+    name = null
+  }
+  return new Atom(name, raw)
+}
+
+cmz.pseudo = function (type, atom) {
+  const name = atom.name + '-' + type
+  return new Atom(
+    name,
+    renderCss(name, type, atom.raw)
+  ).compose(
+    // recursively pseudo-ify compositions
+    atom.comps.map(c => cmz.pseudo(type, c))
+  )
+}
+
+cmz.widerThan = function (width, atom) {
+  const name = atom.name + '-widerThan-' + width
+  const css = renderCss(name, null, atom.raw)
+  return new Atom(
+    name,
+    `
+@media screen and (min-width: ${width}px) {
+  ${css}
+}
+`
+  )
+}
+
+function Atom (name, raw) {
+  this.name = uniquifyName(name)
+
+  this.raw = []
+  this.comps = []
+  this.compose(raw)
+}
+
+Atom.prototype.compose = function (parts) {
+  if (!Array.isArray(parts)) { parts = [parts] }
+
+  const self = this
+  parts.filter(Boolean).forEach(function (p) {
+    const isComp = isName(p) || p instanceof Atom
+    self[isComp ? 'comps' : 'raw'].push(p)
+  })
+
+  return this
+}
+
+Atom.prototype.hasCss = function () {
+  return this.raw && this.raw.length
+}
+
+Atom.prototype.getCss = function () {
+  if (!this.hasCss()) { return '' }
+
+  const name = this.name
+  return renderCss(name, null, this.raw)
+}
+
 Atom.prototype.toString = function () {
   const fullName = this.getFullName()
 
@@ -229,10 +237,6 @@ Atom.prototype.toString = function () {
 
 Atom.prototype.getFullName = function () {
   return [ this.name ].concat(this.comps).join(' ')
-  // const comps = this.comps.join(' ')
-  // return this.hasCss()
-  //   ? this.name + (comps && (' ' + comps))
-  //   : comps
 }
 
 cmz.Atom = Atom
