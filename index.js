@@ -59,7 +59,7 @@ cmz.pseudo = function (type, atom) {
     renderCss(name, type, atom.raw)
   ).compose(
     // recursively pseudo-ify compositions
-    atom.comps.map(c => cmz.pseudo(type, c))
+    atom.comps.map(function (c) { return cmz.pseudo(type, c) })
   )
 }
 
@@ -68,11 +68,7 @@ cmz.widerThan = function (width, atom) {
   const css = renderCss(name, null, atom.raw)
   return new Atom(
     name,
-    `
-@media screen and (min-width: ${width}px) {
-  ${css}
-}
-`
+    '@media screen and (min-width: ' + width + 'px) { ' + css + ' }'
   )
 }
 
