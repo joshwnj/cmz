@@ -22,7 +22,7 @@
     "build:minify": "uglifyjs -o dist/cmz.min.js dist/cmz.js",
     "lint": "standard",
     "test": "tape tests/*.js | tap-spec",
-    "pre-publish": "npm run lint && npm test && npm run build"
+    "prepare": "npm run lint && npm test && npm run build"
   },
   "repository": {
     "type": "git",
