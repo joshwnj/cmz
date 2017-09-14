@@ -1,7 +1,7 @@
 'use strict'
 
 const tape = require('tape')
-const cmz = require('../index.js')
+const cmz = require('../')
 
 tape('css', function (t) {
   t.test('atom with multiple rules', t => {

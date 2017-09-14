@@ -2,7 +2,7 @@
   "name": "cmz",
   "version": "3.5.2",
   "description": "CSS Modules Zero",
-  "main": "index.js",
+  "main": "src/index.js",
   "dependencies": {},
   "bin": {
     "cmz-min": "bin/min.js"

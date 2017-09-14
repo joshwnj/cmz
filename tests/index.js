@@ -1,7 +1,7 @@
 'use strict'
 
 const tape = require('tape')
-const cmz = require('../index.js')
+const cmz = require('../')
 
 tape('compose', function (t) {
   t.test('Empty atom', (t) => {

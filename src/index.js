@@ -1,5 +1,5 @@
-const upsertCss = require('./lib/upsert-css')
-const uniquifyName = require('./lib/uniquify-name')
+const upsertCss = require('./upsert-css')
+const uniquifyName = require('./uniquify-name')
 
 function isName (val) {
   if (!val) { return false }
