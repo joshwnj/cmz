@@ -8,6 +8,8 @@
     "cmz-min": "bin/min.js"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
     "browserify": "^14.4.0",
     "standard": "^10.0.2",
     "tap-spec": "^4.1.1",
@@ -15,14 +17,17 @@
     "uglify-es": "^3.0.15"
   },
   "scripts": {
-    "clean": "rm -rf dist && mkdir dist",
-    "prebuild": "npm run clean",
-    "build": "npm run build:umd && npm run build:minify",
-    "build:umd": "browserify --standalone cmz -o dist/cmz.js index.js",
-    "build:minify": "uglifyjs -o dist/cmz.min.js dist/cmz.js",
+    "build": "npm run babel && npm run umd",
+    "babel": "npm run babel:prep && npm run babel:build",
+    "babel:prep": "rm -rf lib && mkdir lib",
+    "babel:build": "babel -d lib src",
+    "umd": "npm run umd:prep && npm run umd:build && npm run umd:minify",
+    "umd:prep": "rm -rf dist && mkdir dist",
+    "umd:build": "browserify --standalone cmz -o dist/cmz.js lib/index.js",
+    "umd:minify": "uglifyjs -o dist/cmz.min.js dist/cmz.js",
     "lint": "standard",
     "test": "tape tests/*.js | tap-spec",
-    "prepare": "npm run lint && npm test && npm run build"
+    "prepublishOnly": "npm run lint && npm test && npm run build"
   },
   "repository": {
     "type": "git",
@@ -42,7 +47,9 @@
   "homepage": "https://github.com/joshwnj/cmz#readme",
   "directories": {
     "example": "example",
+    "dist": "dist",
     "lib": "lib",
+    "src": "src",
     "test": "tests"
   }
 }
