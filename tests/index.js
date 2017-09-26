@@ -16,7 +16,7 @@ tape('compose', function (t) {
   })
 
   t.test('Empty with composition', (t) => {
-    const atom = cmz('')
+    const atom = new cmz.Atom('')
     atom.compose(['aa', 'bb'])
     t.equal(
       atom.toString(),
@@ -28,7 +28,7 @@ tape('compose', function (t) {
   })
 
   t.test('Empty composition', (t) => {
-    const atom = cmz('color: blue')
+    const atom = new cmz.Atom('color: blue')
     const name = atom.name
     atom.compose('')
     t.equal(
@@ -40,7 +40,7 @@ tape('compose', function (t) {
   })
 
   t.test('Single composition', (t) => {
-    const atom = cmz('overflow: hidden')
+    const atom = new cmz.Atom('overflow: hidden')
     const name = atom.name
     atom.compose('aa')
     t.equal(
@@ -52,7 +52,7 @@ tape('compose', function (t) {
   })
 
   t.test('Multiple composition', (t) => {
-    const atom = cmz(`
+    const atom = new cmz.Atom(`
     @media (min-width: 400) {
       & { color: blue }
     } `)
@@ -68,8 +68,8 @@ tape('compose', function (t) {
   })
 
   t.test('Nested composition', (t) => {
-    const a1 = cmz('color: green').compose(['aa', 'bb'])
-    const a2 = cmz('color: yellow').compose([a1, 'cc'])
+    const a1 = new cmz.Atom('color: green').compose(['aa', 'bb'])
+    const a2 = new cmz.Atom('color: yellow').compose([a1, 'cc'])
 
     t.equal(
       a2.toString(),

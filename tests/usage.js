@@ -8,9 +8,10 @@ tape('usage', function (t) {
 
   cmz.reset()
   result = cmz('color: red')
-  t.ok(
-    result instanceof cmz.Atom,
-    'cmz/1 creates an Atom when arg 1 looks like a rule'
+  t.equal(
+    typeof result,
+    'string',
+    'cmz/1 creates and stringifies an Atom when arg 1 looks like a rule'
   )
 
   t.equal(
@@ -20,15 +21,10 @@ tape('usage', function (t) {
   )
 
   result = cmz('myAtom', 'color: red')
-  t.ok(
-    result instanceof cmz.Atom,
-    'cmz/2 creates a named Atom when arg 2 looks like a rule'
-  )
-
   t.equal(
-    result.toString(),
+    result,
     'myAtom',
-    'Named atoms use the name they are given'
+    'cmz/2 creates a named Atom when arg 2 looks like a rule'
   )
 
   t.end()
