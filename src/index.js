@@ -3,7 +3,7 @@ const uniquifyName = require('./uniquify-name')
 
 function isName (val) {
   if (!val) { return false }
-  return /^[a-zA-Z][a-zA-Z0-9-_]*$/.test(val)
+  return /^[a-zA-Z][a-zA-Z0-9-_ ]*$/.test(val)
 }
 
 function addSemis (raw) {
@@ -49,7 +49,7 @@ function cmz (name, raw) {
     raw = name
     name = null
   }
-  return new Atom(name, raw)
+  return new Atom(name, raw).toString()
 }
 
 cmz.pseudo = function (type, atom) {
