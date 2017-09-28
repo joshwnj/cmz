@@ -1,6 +1,6 @@
 {
   "name": "cmz",
-  "version": "3.6.2",
+  "version": "3.7.0",
   "description": "CSS Modules Zero",
   "main": "lib/index.js",
   "dependencies": {},
