@@ -11,7 +11,7 @@ tape('usage', function (t) {
   t.equal(
     typeof result,
     'string',
-    'cmz/1 creates and stringifies an Atom when arg 1 looks like a rule'
+    'cmz/1 creates and stringifies an atom'
   )
 
   t.equal(
@@ -20,11 +20,11 @@ tape('usage', function (t) {
     'Unnamed atoms are given a sequential name'
   )
 
-  result = cmz('myAtom', 'color: red')
+  result = cmz.named('myAtom', 'color: red')
   t.equal(
     result,
     'myAtom',
-    'cmz/2 creates a named Atom when arg 2 looks like a rule'
+    'cmz.named creates a named atom'
   )
 
   t.end()

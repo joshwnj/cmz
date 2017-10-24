@@ -26,8 +26,8 @@ const cmz = require('cmz')
 
 // Define a single class.
 const myAmazingClass = cmz(`
-  font-style: italic;
-  color: magenta;
+  font-style: italic
+  color: magenta
 `)
 
 // This is the equivalent of
@@ -50,11 +50,11 @@ If you want a class with a pseudoselector, we can use the `&` placeholder (which
 ```js
 const classWithPseudos = cmz(`
 & {
-  color: magenta;
+  color: magenta
 }
 
 &:hover {
-  color: cyan;
+  color: cyan
 }
 `)
 ```
@@ -75,8 +75,8 @@ export const bigText = cmz(`
 `)
 
 export const highlight = cmz(`
-  color: cyan;
-  font-weight: bold;
+  color: cyan
+  font-weight: bold
 `)
 ```
 
@@ -88,13 +88,13 @@ To compose, pass an array of classes. It's fine to mix new classes with existing
 import cmz from 'cmz'
 import typo from './typography'
 
-const heading = cmz([`
+const heading = cmz(`
   padding: 16px
   border-bottom: 1px solid #000
 `,
   typo.bigText,
   typo.highlight
-])
+)
 
 export default function () {
   return `<h1 class="${heading}">cmz demo</h1>`
@@ -122,12 +122,12 @@ By default, animations are left untouched. But you can create unique animation n
 ```js
 const fadeAnim = cmz(`
   & {
-    animation: ? 1s infinite;
+    animation: ? 1s infinite
   }
 
   @keyframes ? {
-    0% { opacity: 1; }
-    50% { opacity: 0; }
+    0% { opacity: 1 }
+    50% { opacity: 0 }
   }
 `)
 ```
@@ -135,10 +135,10 @@ const fadeAnim = cmz(`
 Because the animation is coupled with a class, they can be applied as compositions, eg:
 
 ```js
-const myFadingThing = cmz([
+const myFadingThing = cmz(
   'width: 50%',
   fadeAnim
-])
+)
 ```
 
 ### Does `cmz` add vendor-prefixes?
