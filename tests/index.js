@@ -129,6 +129,5 @@ tape('compose', function (t) {
       'Placeholder for scoped keyframes')
 
     t.end()
-
   })
 })
