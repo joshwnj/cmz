@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "cmz": "^3.3.0"
+    "cmz": "^3.8.0"
   },
   "devDependencies": {
     "babel-plugin-cmz-names": "^1.1.0",

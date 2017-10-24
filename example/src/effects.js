@@ -7,27 +7,27 @@ module.exports.shadow = cmz(`
 
 const makeItRed = cmz('& { color: red; }')
 
-module.exports.pulse = cmz([
+module.exports.pulse = cmz(
   makeItRed,
   `
   & {
-    animation: ? 1s infinite;
+    animation: ? 1s infinite
   }
 
   @keyframes ? {
-    0% { opacity: 1; }
-    50% { opacity: .5; }
+    0% { opacity: 1 }
+    50% { opacity: .5 }
   }
   `
-])
+)
 
 module.exports.spin = cmz(`
   & {
-    animation: ? 1s infinite linear;
+    animation: ? 1s infinite linear
   }
 
   @keyframes ? {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg) }
+    100% { transform: rotate(360deg) }
   }
 `)
