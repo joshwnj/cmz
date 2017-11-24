@@ -1,12 +1,9 @@
+const addSemis = require('css-add-semis')
 const upsertCss = require('./upsert-css')
 const uniquifyName = require('./uniquify-name')
 
 function isName (val) {
   return val && /^[a-zA-Z][a-zA-Z0-9-_ ]*$/.test(val)
-}
-
-function addSemis (raw) {
-  return raw.replace(/(\w+:[^;}\n]+?)(\s*}|\n|$)/g, '$1;$2')
 }
 
 function cmzNamed (name, ...parts) {

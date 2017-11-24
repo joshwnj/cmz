@@ -3,7 +3,9 @@
   "version": "3.8.0",
   "description": "CSS Modules Zero",
   "main": "lib/index.js",
-  "dependencies": {},
+  "dependencies": {
+    "css-add-semis": "^1.0.1"
+  },
   "bin": {
     "cmz-min": "bin/min.js"
   },
