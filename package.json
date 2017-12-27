@@ -4,7 +4,7 @@
   "description": "CSS Modules Zero",
   "main": "lib/index.js",
   "dependencies": {
-    "css-add-semis": "^1.0.1"
+    "css-add-semis": "^1.1.0"
   },
   "bin": {
     "cmz-min": "bin/min.js"
