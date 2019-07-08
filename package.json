@@ -11,11 +11,11 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "browserify": "^16.0.0",
+    "babel-preset-env": "^1.7.0",
+    "browserify": "^16.3.0",
     "standard": "^12.0.0",
     "tap-spec": "^5.0.0",
-    "tape": "^4.6.3",
+    "tape": "^4.11.0",
     "uglify-es": "^3.0.15"
   },
   "scripts": {
