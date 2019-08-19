@@ -1,4 +1,4 @@
-const sheets = {}
+const sheets = global.__cmz_sheets = {}
 const hasDoc = typeof document !== 'undefined'
 
 function upsertCss (id, css) {
